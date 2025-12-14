@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مشغل Leo TV</title>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/dashjs@latest/dist/dash.all.min.js"></script>
+
+<style>
+body {
+  margin: 0;
+  background: black;
+}
+video {
+  width: 100vw;
+  height: 100vh;
+}
+</style>
+</head>
+
+<body>
+
+<video id="video" controls autoplay></video>
+
+<script>
+const params = new URLSearchParams(location.search);
+const encoded = params.get("src");
+if (!encoded) location.href = "/";
+
+const url = atob(decodeURIComponent(encoded));
+const video = document.getElementById("video");
+
+function play(url) {
+  if (url.includes(".m3u8")) {
+    if (Hls.isSupported()) {
+      const hls = new Hls();
+      hls.loadSource(url);
+      hls.attachMedia(video);
+    } else {
+      video.src = url;
+    }
+  }
+  else if (url.includes(".mpd")) {
+    const dash = dashjs.MediaPlayer().create();
+    dash.initialize(video, url, true);
+  }
+  else {
+    video.src = url;
+  }
+}
+
+play(url);
+</script>
+
+</body>
+</html>
