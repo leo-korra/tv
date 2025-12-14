@@ -1,58 +1,141 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>مشغل Leo TV</title>
-
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-<script src="https://cdn.jsdelivr.net/npm/dashjs@latest/dist/dash.all.min.js"></script>
-
-<style>
-body {
-  margin: 0;
-  background: black;
-}
-video {
-  width: 100vw;
-  height: 100vh;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مشغل Leo TV - معدل</title>
+    <!-- تحميل مكتبات HLS.js و dash.js من CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dashjs@latest/dist/dash.all.min.js"></script>
+    <style>
+        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; }
+        video { width: 100%; height: 90vh; display: block; }
+        #status { padding: 10px; background: #222; }
+        .error { color: #ff6b6b; }
+    </style>
 </head>
-
 <body>
+    <video id="video" controls autoplay playsinline></video>
+    <div id="status">جاري الإعداد...</div>
 
-<video id="video" controls autoplay></video>
+    <script>
+        const video = document.getElementById('video');
+        const statusEl = document.getElementById('status');
 
-<script>
-const params = new URLSearchParams(location.search);
-const encoded = params.get("src");
-if (!encoded) location.href = "/";
+        function updateStatus(msg, isError = false) {
+            statusEl.textContent = msg;
+            statusEl.className = isError ? 'error' : '';
+            console.log(isError ? '❌ ' + msg : 'ℹ️ ' + msg);
+        }
 
-const url = atob(decodeURIComponent(encoded));
-const video = document.getElementById("video");
+        function initPlayer() {
+            // 1. الحصول على عنوان URL من معلمة الرابط
+            const params = new URLSearchParams(window.location.search);
+            const encodedUrl = params.get('src');
+            
+            if (!encodedUrl) {
+                updateStatus('⚠️ لم يتم توفير عنوان الفيديو في الرابط (?src=).', true);
+                // يمكنك هنا تعيين عنوان اختبار افتراضي للتحقق
+                // playTestStream();
+                return;
+            }
 
-function play(url) {
-  if (url.includes(".m3u8")) {
-    if (Hls.isSupported()) {
-      const hls = new Hls();
-      hls.loadSource(url);
-      hls.attachMedia(video);
-    } else {
-      video.src = url;
-    }
-  }
-  else if (url.includes(".mpd")) {
-    const dash = dashjs.MediaPlayer().create();
-    dash.initialize(video, url, true);
-  }
-  else {
-    video.src = url;
-  }
-}
+            // 2. فك تشفير العنوان (إذا كان مشفرًا بـ Base64)
+            let streamUrl;
+            try {
+                streamUrl = atob(decodeURIComponent(encodedUrl));
+                updateStatus('تم فك تشفير عنوان الفيديو: ' + streamUrl);
+            } catch (e) {
+                // إذا فشل الفك، افترض أنه رابط عادي
+                streamUrl = decodeURIComponent(encodedUrl);
+                updateStatus('استخدام العنوان كرابط عادي: ' + streamUrl);
+            }
 
-play(url);
-</script>
+            // 3. تشغيل الفيديو بناءً على النوع
+            playStream(streamUrl);
+        }
 
+        function playStream(url) {
+            updateStatus('جاري محاولة تشغيل: ' + url);
+
+            if (url.includes('.m3u8')) {
+                playHLS(url);
+            } else if (url.includes('.mpd')) {
+                playDASH(url);
+            } else {
+                // تنسيق فيديو عادي (MP4, WebM, etc.)
+                playNative(url);
+            }
+        }
+
+        function playHLS(url) {
+            if (Hls.isSupported()) {
+                updateStatus('المتصفح يدعم HLS.js، جاري التهيئة...');
+                const hls = new Hls({
+                    debug: false, // يمكن تفعيله لرؤية تفاصيل أكثر في الكونسول
+                    enableWorker: true
+                });
+
+                hls.loadSource(url);
+                hls.attachMedia(video);
+
+                hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                    updateStatus('تم تحليل قائمة التشغيل HLS، جاري البدء...');
+                    video.play().catch(e => updateStatus('التشغيل التلقائي فشل: ' + e.message, true));
+                });
+
+                hls.on(Hls.Events.ERROR, (event, data) => {
+                    updateStatus('خطأ في HLS: ' + data.details, true);
+                    console.error('HLS Error:', data);
+                });
+
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                // دعم HLS الأصلي في المتصفحات مثل Safari
+                updateStatus('المتصفح يدعم HLS natively.');
+                video.src = url;
+                video.play().catch(e => updateStatus('التشغيل التلقائي فشل: ' + e.message, true));
+            } else {
+                updateStatus('⚠️ هذا المتصفح لا يدعم تشغيل تيارات HLS.', true);
+            }
+        }
+
+        function playDASH(url) {
+            // الطريقة الموصى بها لإنشاء مشغل dash.js
+            const player = dashjs.MediaPlayer().create();
+            updateStatus('تم إنشاء مشغل DASH، جاري التهيئة...');
+            
+            player.initialize(video, url, true); // true = التشغيل التلقائي
+            
+            player.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, () => {
+                updateStatus('تم تهيئة تيار DASH بنجاح.');
+            });
+            
+            player.on(dashjs.MediaPlayer.events.ERROR, (e) => {
+                updateStatus('خطأ في مشغل DASH.', true);
+                console.error('DASH Error:', e);
+            });
+        }
+
+        function playNative(url) {
+            updateStatus('جاري التشغيل كفيديو عادي...');
+            video.src = url;
+            video.load();
+            video.play().catch(e => updateStatus('التشغيل التلقائي فشل: ' + e.message, true));
+        }
+
+        // (اختياري) دالة لتجربة رابط اختبار مباشرة دون الحاجة لمعاملات الرابط
+        function playTestStream() {
+            // رابط HLS تجريبي عام (قد يتوقف العمل في المستقبل)
+            const testHlsUrl = 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
+            // رابط DASH تجريبي عام
+            const testDashUrl = 'https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd';
+            
+            updateStatus('جاري تحميل تيار اختباري...');
+            playStream(testHlsUrl); // جرب تغيير هذا إلى testDashUrl لاختبار DASH
+        }
+
+        // بدء المشغل عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', initPlayer);
+    </script>
 </body>
 </html>
