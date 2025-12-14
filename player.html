@@ -3,304 +3,517 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشغل Leo TV - معدل</title>
-    <!-- تحميل مكتبات HLS.js و dash.js من CDN -->
+    <title>مشغل Leo TV - الإصدار المحسن</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/dashjs@latest/dist/dash.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/videojs@7/dist/video.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/videojs@7/dist/video-js.min.css" rel="stylesheet">
     <style>
-        body { 
-            margin: 0; 
-            background: #000; 
-            color: #fff; 
-            font-family: 'Cairo', sans-serif;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #000;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 15px;
             text-align: center;
         }
-        video { 
-            width: 100%; 
-            height: 80vh; 
-            display: block; 
+        
+        .header h1 {
+            margin-bottom: 10px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .player-container {
+            position: relative;
+            width: 100%;
             background: #111;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
         }
-        #status { 
-            padding: 15px; 
-            background: #222; 
-            margin: 10px;
-            border-radius: 8px;
-            min-height: 60px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+        
+        #video {
+            width: 100%;
+            height: 70vh;
         }
-        .error { 
-            color: #ff6b6b; 
-        }
-        .success {
-            color: #4ecdc4;
-        }
+        
         .controls {
-            padding: 15px;
             display: flex;
-            justify-content: center;
-            gap: 15px;
+            gap: 10px;
             flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
         }
-        .controls button {
-            padding: 12px 24px;
+        
+        .btn {
+            padding: 12px 25px;
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 25px;
             cursor: pointer;
-            font-family: 'Cairo', sans-serif;
-            transition: transform 0.2s;
+            font-size: 16px;
+            transition: all 0.3s;
         }
-        .controls button:hover {
-            transform: scale(1.05);
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
-        .info {
-            padding: 10px;
+        
+        .status {
+            padding: 15px;
+            margin: 10px 0;
             background: rgba(255,255,255,0.1);
-            border-radius: 8px;
-            margin: 10px;
-            font-size: 14px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .debug {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .error { color: #ff6b6b; }
+        .success { color: #4ecdc4; }
+        .warning { color: #ffd93d; }
+        
+        .stream-info {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
-
-    <video id="video" controls autoplay playsinline crossorigin="anonymous"></video>
-    
-    <div class="info" id="streamInfo">
-        جاري تحميل معلومات القناة...
+    <div class="header">
+        <h1>مشغل Leo TV المحسن</h1>
+        <p>إصدار متقدم مع دعم جميع أنواع البث</p>
     </div>
     
-    <div class="controls">
-        <button onclick="window.location.href='index.html'">← العودة للقنوات</button>
-        <button onclick="refreshStream()">🔄 تحديث البث</button>
-        <button onclick="toggleFullscreen()">📺 وضع ملء الشاشة</button>
+    <div class="container">
+        <div class="stream-info" id="streamInfo">
+            جاري تحميل معلومات البث...
+        </div>
+        
+        <div class="player-container">
+            <video id="video" class="video-js vjs-default-skin" controls autoplay playsinline>
+                <p class="vjs-no-js">
+                    لتشغيل الفيديو يرجى تفعيل JavaScript أو استخدام متصفح يدعم HTML5 video
+                </p>
+            </video>
+        </div>
+        
+        <div class="status" id="status">
+            جاري إعداد المشغل...
+        </div>
+        
+        <div class="controls">
+            <button class="btn" onclick="window.location.href='index.html'">
+                ← العودة للقنوات
+            </button>
+            <button class="btn" onclick="reloadStream()">
+                🔄 إعادة تحميل البث
+            </button>
+            <button class="btn" onclick="toggleFullscreen()">
+                📺 ملء الشاشة
+            </button>
+            <button class="btn" onclick="toggleDebug()">
+                🐛 وضع التصحيح
+            </button>
+            <button class="btn" onclick="testAlternatePlayers()">
+                🔧 تجربة مشغلات بديلة
+            </button>
+        </div>
+        
+        <div class="debug" id="debugPanel" style="display: none;">
+            <h3>معلومات التصحيح:</h3>
+            <div id="debugLog"></div>
+        </div>
     </div>
-    
-    <div id="status">جاري الإعداد...</div>
 
     <script>
+        // المتغيرات العامة
+        let currentStreamUrl = '';
+        let hlsPlayer = null;
+        let dashPlayer = null;
+        let debugMode = false;
+        
+        // عناصر DOM
         const video = document.getElementById('video');
         const statusEl = document.getElementById('status');
         const streamInfoEl = document.getElementById('streamInfo');
-        let currentStreamUrl = '';
-
-        function updateStatus(msg, type = 'info') {
-            statusEl.textContent = msg;
-            statusEl.className = type;
-            console.log(`${type === 'error' ? '❌' : 'ℹ️'} ${msg}`);
+        const debugPanel = document.getElementById('debugPanel');
+        const debugLog = document.getElementById('debugLog');
+        
+        // دالة تسجيل معلومات التصحيح
+        function logDebug(message, type = 'info') {
+            const time = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.innerHTML = `<span style="color:${getColor(type)}">[${time}] ${message}</span>`;
+            debugLog.appendChild(logEntry);
+            debugLog.scrollTop = debugLog.scrollHeight;
+            
+            console.log(`[${type.toUpperCase()}] ${message}`);
         }
-
+        
+        function getColor(type) {
+            switch(type) {
+                case 'error': return '#ff6b6b';
+                case 'success': return '#4ecdc4';
+                case 'warning': return '#ffd93d';
+                default: return '#ffffff';
+            }
+        }
+        
+        // تحديث حالة المشغل
+        function updateStatus(message, type = 'info') {
+            statusEl.textContent = message;
+            statusEl.className = type;
+            logDebug(message, type);
+        }
+        
+        // تحديث معلومات البث
         function updateStreamInfo(info) {
             streamInfoEl.innerHTML = info;
         }
-
-        function initPlayer() {
-            // 1. الحصول على عنوان URL من معلمة الرابط
-            const params = new URLSearchParams(window.location.search);
-            const encodedUrl = params.get('src');
+        
+        // التبديل بين وضع التصحيح
+        function toggleDebug() {
+            debugMode = !debugMode;
+            debugPanel.style.display = debugMode ? 'block' : 'none';
+            updateStatus(debugMode ? '✅ وضع التصحيح مفعل' : '❌ وضع التصحيح معطل');
+        }
+        
+        // فحص الرابط بدقة
+        async function diagnoseStream(url) {
+            logDebug(`بدء فحص الرابط: ${url}`, 'info');
             
-            if (!encodedUrl) {
-                updateStatus('⚠️ لم يتم تحديد قناة. الرجاء اختيار قناة من الصفحة الرئيسية.', 'error');
-                
-                // إضافة رسالة تفصيلية
-                statusEl.innerHTML = `
-                    <div style="margin: 20px;">
-                        <h3>لم يتم تحديد قناة للمشاهدة</h3>
-                        <p>يبدو أنك فتحت صفحة المشغل مباشرة بدون اختيار قناة.</p>
-                        <button onclick="window.location.href='index.html'" 
-                                style="padding: 15px 30px; 
-                                       background: linear-gradient(135deg, #667eea, #764ba2); 
-                                       color: white; 
-                                       border: none; 
-                                       border-radius: 10px; 
-                                       font-size: 18px; 
-                                       cursor: pointer; 
-                                       margin-top: 20px;">
-                            ← العودة إلى القنوات
-                        </button>
+            const tests = [
+                {
+                    name: 'فحص CORS الأساسي',
+                    test: async () => {
+                        try {
+                            const response = await fetch(url, { mode: 'no-cors' });
+                            return { success: true, message: 'الرابط يستجيب (no-cors mode)' };
+                        } catch (e) {
+                            return { success: false, message: `فشل no-cors: ${e.message}` };
+                        }
+                    }
+                },
+                {
+                    name: 'فحص عبر Proxy',
+                    test: async () => {
+                        try {
+                            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+                            const response = await fetch(proxyUrl);
+                            const data = await response.json();
+                            
+                            if (data.contents) {
+                                return { 
+                                    success: true, 
+                                    message: `✅ Proxy ناجح - حجم الملف: ${data.contents.length} حرف`
+                                };
+                            } else {
+                                return { success: false, message: 'Proxy فشل - لا يوجد محتوى' };
+                            }
+                        } catch (e) {
+                            return { success: false, message: `Proxy فشل: ${e.message}` };
+                        }
+                    }
+                },
+                {
+                    name: 'فحص نوع الملف',
+                    test: async () => {
+                        const isHLS = url.includes('.m3u8');
+                        const isDASH = url.includes('.mpd');
+                        const isMP4 = url.includes('.mp4') || url.includes('.webm');
+                        
+                        let type = 'غير معروف';
+                        if (isHLS) type = 'HLS Stream (.m3u8)';
+                        if (isDASH) type = 'DASH Stream (.mpd)';
+                        if (isMP4) type = 'فيديو مباشر (MP4/WebM)';
+                        
+                        return { success: true, message: `نوع الملف: ${type}` };
+                    }
+                }
+            ];
+            
+            let allTestsPassed = true;
+            let results = [];
+            
+            for (const test of tests) {
+                logDebug(`جاري: ${test.name}`, 'info');
+                try {
+                    const result = await test.test();
+                    results.push({ name: test.name, ...result });
+                    
+                    if (!result.success) allTestsPassed = false;
+                } catch (e) {
+                    results.push({ 
+                        name: test.name, 
+                        success: false, 
+                        message: `خطأ: ${e.message}` 
+                    });
+                    allTestsPassed = false;
+                }
+            }
+            
+            // عرض النتائج
+            let resultHTML = '<h4>نتائج الفحص:</h4>';
+            results.forEach(r => {
+                resultHTML += `
+                    <div style="margin: 5px 0; padding: 5px; background: ${r.success ? '#1a3c1a' : '#3c1a1a'}; border-radius: 3px;">
+                        <strong>${r.name}:</strong> ${r.message}
                     </div>
                 `;
-                return;
-            }
-
-            // 2. فك تشفير العنوان
-            let streamUrl;
-            try {
-                streamUrl = atob(decodeURIComponent(encodedUrl));
-                updateStatus('جاري تحميل القناة...', 'success');
-                updateStreamInfo('جاري الاتصال بمصدر البث...');
-            } catch (e) {
-                streamUrl = decodeURIComponent(encodedUrl);
-                updateStatus('جاري تحميل القناة...', 'success');
-                updateStreamInfo('جاري الاتصال بمصدر البث...');
-            }
-
-            // 3. حفظ الرابط الحالي
-            currentStreamUrl = streamUrl;
+            });
             
-            // 4. عرض معلومات الرابط (مختصرة)
-            const shortUrl = streamUrl.length > 50 ? 
-                streamUrl.substring(0, 50) + '...' : 
-                streamUrl;
-            updateStreamInfo(`<strong>مصدر البث:</strong> ${shortUrl}<br>
-                            <strong>النوع:</strong> ${streamUrl.includes('.m3u8') ? 'HLS' : streamUrl.includes('.mpd') ? 'DASH' : 'فيديو مباشر'}`);
-            
-            // 5. تشغيل الفيديو
-            playStream(streamUrl);
+            updateStreamInfo(resultHTML);
+            return allTestsPassed;
         }
-
-        function playStream(url) {
-            updateStatus('جاري محاولة تشغيل البث...', 'info');
-
-            // إعادة تعيين الفيديو
-            video.src = '';
+        
+        // محاولة تشغيل البث بطرق مختلفة
+        async function playStream(url) {
+            currentStreamUrl = url;
             
+            logDebug(`جاري تشغيل الرابط: ${url}`, 'info');
+            
+            // أولاً: تشخيص الرابط
+            const isHealthy = await diagnoseStream(url);
+            
+            if (!isHealthy) {
+                updateStatus('⚠️ قد يكون هناك مشاكل في الرابط', 'warning');
+            }
+            
+            // تحديد نوع البث
             if (url.includes('.m3u8')) {
-                playHLS(url);
+                await playWithHLS(url);
             } else if (url.includes('.mpd')) {
-                playDASH(url);
+                await playWithDASH(url);
             } else {
-                // تنسيق فيديو عادي (MP4, WebM, etc.)
-                playNative(url);
+                await playWithNative(url);
             }
         }
-
-        function playHLS(url) {
+        
+        // تشغيل HLS
+        async function playWithHLS(url) {
+            updateStatus('🎬 جاري تشغيل HLS...', 'info');
+            
+            // الطريقة 1: Hls.js
             if (Hls.isSupported()) {
-                updateStatus('المتصفح يدعم HLS.js، جاري التهيئة...', 'success');
+                logDebug('المتصفح يدعم Hls.js', 'success');
                 
-                // إذا كان هناك مشغل HLS قديم، قم بتدميره أولاً
-                if (window.hlsPlayer) {
-                    window.hlsPlayer.destroy();
+                if (hlsPlayer) {
+                    hlsPlayer.destroy();
                 }
                 
-                const hls = new Hls({
-                    debug: false,
+                hlsPlayer = new Hls({
+                    debug: debugMode,
                     enableWorker: true,
                     lowLatencyMode: true,
-                    backBufferLength: 90
+                    xhrSetup: function(xhr) {
+                        // إضافة رأسات مخصصة إذا لزم الأمر
+                        xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+                        xhr.setRequestHeader('Access-Control-Allow-Credentials', 'true');
+                    }
                 });
-
-                window.hlsPlayer = hls;
                 
-                hls.loadSource(url);
-                hls.attachMedia(video);
-
-                hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                    updateStatus('✅ تم تحليل قائمة التشغيل HLS بنجاح', 'success');
-                    updateStreamInfo(streamInfoEl.innerHTML + '<br><strong>الحالة:</strong> ✅ البث جاهز');
-                    
+                hlsPlayer.loadSource(url);
+                hlsPlayer.attachMedia(video);
+                
+                hlsPlayer.on(Hls.Events.MANIFEST_PARSED, () => {
+                    updateStatus('✅ HLS جاهز للتشغيل', 'success');
                     video.play().catch(e => {
-                        updateStatus('التشغيل التلقائي فشل: ' + e.message, 'error');
-                        video.controls = true;
+                        updateStatus(`التشغيل التلقائي فشل: ${e.message}`, 'warning');
                     });
                 });
-
-                hls.on(Hls.Events.ERROR, (event, data) => {
-                    updateStatus('❌ خطأ في HLS: ' + data.details, 'error');
-                    console.error('HLS Error:', data);
+                
+                hlsPlayer.on(Hls.Events.ERROR, (event, data) => {
+                    logDebug(`خطأ HLS: ${data.details} - ${data.type}`, 'error');
                     
                     if (data.fatal) {
-                        switch(data.type) {
-                            case Hls.ErrorTypes.NETWORK_ERROR:
-                                updateStreamInfo(streamInfoEl.innerHTML + '<br><strong>الحالة:</strong> ❌ مشكلة في الشبكة');
-                                break;
-                            case Hls.ErrorTypes.MEDIA_ERROR:
-                                updateStreamInfo(streamInfoEl.innerHTML + '<br><strong>الحالة:</strong> ❌ مشكلة في الوسائط');
-                                break;
-                            default:
-                                updateStreamInfo(streamInfoEl.innerHTML + '<br><strong>الحالة:</strong> ❌ خطأ غير معروف');
-                                break;
+                        updateStatus('❌ خطأ قاتل في HLS', 'error');
+                        
+                        // جرب الطريقة البديلة
+                        if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+                            setTimeout(() => {
+                                updateStatus('🔄 جرب طريقة بديلة...', 'warning');
+                                playWithNativeHLS(url);
+                            }, 1000);
                         }
                     }
                 });
-
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                // دعم HLS الأصلي في المتصفحات مثل Safari
-                updateStatus('المتصفح يدعم HLS بشكل أصلي', 'success');
-                video.src = url;
                 
-                video.addEventListener('loadedmetadata', () => {
-                    updateStatus('✅ الفيديو جاهز للتشغيل', 'success');
-                    updateStreamInfo(streamInfoEl.innerHTML + '<br><strong>الحالة:</strong> ✅ البث جاهز');
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                // الطريقة 2: HLS الأصلي (Safari)
+                logDebug('استخدام HLS الأصلي للمتصفح', 'info');
+                playWithNativeHLS(url);
+            } else {
+                updateStatus('❌ المتصفح لا يدعم HLS', 'error');
+            }
+        }
+        
+        // تشغيل HLS الأصلي
+        function playWithNativeHLS(url) {
+            video.src = url;
+            video.load();
+            
+            video.addEventListener('loadedmetadata', () => {
+                updateStatus('✅ HLS الأصلي جاهز', 'success');
+                video.play().catch(e => {
+                    updateStatus(`التشغيل التلقائي فشل: ${e.message}`, 'warning');
+                });
+            });
+            
+            video.addEventListener('error', (e) => {
+                updateStatus('❌ خطأ في تشغيل HLS الأصلي', 'error');
+                logDebug(`خطأ فيديو: ${video.error ? video.error.message : 'غير معروف'}`, 'error');
+            });
+        }
+        
+        // تشغيل DASH
+        async function playWithDASH(url) {
+            updateStatus('🎬 جاري تشغيل DASH...', 'info');
+            
+            if (typeof dashjs !== 'undefined') {
+                if (dashPlayer) {
+                    dashPlayer.destroy();
+                }
+                
+                dashPlayer = dashjs.MediaPlayer().create();
+                dashPlayer.initialize(video, url, true);
+                
+                dashPlayer.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, () => {
+                    updateStatus('✅ DASH جاهز للتشغيل', 'success');
                 });
                 
-                video.play().catch(e => {
-                    updateStatus('التشغيل التلقائي فشل: ' + e.message, 'error');
-                    video.controls = true;
+                dashPlayer.on(dashjs.MediaPlayer.events.ERROR, (e) => {
+                    updateStatus('❌ خطأ في DASH', 'error');
+                    logDebug(`خطأ DASH: ${JSON.stringify(e)}`, 'error');
                 });
             } else {
-                updateStatus('⚠️ هذا المتصفح لا يدعم تشغيل تيارات HLS.', 'error');
-                updateStreamInfo('⚠️ المتصفح غير مدعوم. جرب استخدام Chrome أو Firefox أو Safari.');
+                updateStatus('❌ مكتبة DASH غير محملة', 'error');
             }
         }
-
-        function playDASH(url) {
-            updateStatus('تهيئة مشغل DASH...', 'info');
-            
-            // إذا كان هناك مشغل DASH قديم، قم بتدميره أولاً
-            if (window.dashPlayer) {
-                window.dashPlayer.destroy();
-            }
-            
-            const player = dashjs.MediaPlayer().create();
-            window.dashPlayer = player;
-            
-            player.updateSettings({
-                streaming: {
-                    delay: {
-                        liveDelay: 3
-                    }
-                }
-            });
-            
-            player.initialize(video, url, true);
-            
-            player.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, () => {
-                updateStatus('✅ تم تهيئة تيار DASH بنجاح', 'success');
-                updateStreamInfo(streamInfoEl.innerHTML + '<br><strong>الحالة:</strong> ✅ البث جاهز');
-            });
-            
-            player.on(dashjs.MediaPlayer.events.ERROR, (e) => {
-                updateStatus('❌ خطأ في مشغل DASH', 'error');
-                updateStreamInfo(streamInfoEl.innerHTML + '<br><strong>الحالة:</strong> ❌ خطأ في التشغيل');
-                console.error('DASH Error:', e);
-            });
-        }
-
-        function playNative(url) {
-            updateStatus('جاري التشغيل كفيديو مباشر...', 'info');
+        
+        // تشغيل الفيديو العادي
+        async function playWithNative(url) {
+            updateStatus('🎬 جاري تشغيل الفيديو المباشر...', 'info');
             
             video.src = url;
             video.load();
             
-            video.addEventListener('loadeddata', () => {
-                updateStatus('✅ الفيديو جاهز للتشغيل', 'success');
-                updateStreamInfo(streamInfoEl.innerHTML + '<br><strong>الحالة:</strong> ✅ البث جاهز');
-            });
-            
-            video.play().catch(e => {
-                updateStatus('التشغيل التلقائي فشل: ' + e.message, 'error');
-                video.controls = true;
+            return new Promise((resolve) => {
+                video.addEventListener('loadeddata', () => {
+                    updateStatus('✅ الفيديو جاهز', 'success');
+                    video.play().then(() => {
+                        resolve(true);
+                    }).catch(e => {
+                        updateStatus(`التشغيل التلقائي فشل: ${e.message}`, 'warning');
+                        resolve(false);
+                    });
+                });
+                
+                video.addEventListener('error', () => {
+                    updateStatus('❌ خطأ في تشغيل الفيديو', 'error');
+                    logDebug(`خطأ فيديو: ${video.error ? video.error.code : 'غير معروف'}`, 'error');
+                    resolve(false);
+                });
+                
+                // مهلة إذا استغرق التحميل طويلاً
+                setTimeout(() => {
+                    if (video.readyState < 2) {
+                        updateStatus('⚠️ التحميل يستغرق وقتاً طويلاً', 'warning');
+                        resolve(false);
+                    }
+                }, 10000);
             });
         }
-
-        function refreshStream() {
-            if (currentStreamUrl) {
-                updateStatus('🔄 جاري تحديث البث...', 'info');
-                updateStreamInfo('جاري إعادة الاتصال بمصدر البث...');
-                playStream(currentStreamUrl);
-            } else {
-                updateStatus('❌ لا يوجد بث حالي لتحديثه', 'error');
+        
+        // تجربة مشغلات بديلة
+        async function testAlternatePlayers() {
+            if (!currentStreamUrl) return;
+            
+            updateStatus('🔧 جرب مشغلات بديلة...', 'info');
+            
+            const players = [
+                { name: 'HLS.js', method: () => playWithHLS(currentStreamUrl) },
+                { name: 'HLS الأصلي', method: () => playWithNativeHLS(currentStreamUrl) },
+                { name: 'الفيديو المباشر', method: () => playWithNative(currentStreamUrl) }
+            ];
+            
+            for (let i = 0; i < players.length; i++) {
+                updateStatus(`جرب ${players[i].name}...`, 'info');
+                
+                try {
+                    await players[i].method();
+                    updateStatus(`✅ ${players[i].name} نجح`, 'success');
+                    break;
+                } catch (e) {
+                    logDebug(`❌ ${players[i].name} فشل: ${e.message}`, 'error');
+                    
+                    if (i === players.length - 1) {
+                        updateStatus('❌ جميع المشغلات فشلت', 'error');
+                    }
+                }
             }
         }
-
+        
+        // إعادة تحميل البث
+        function reloadStream() {
+            if (!currentStreamUrl) {
+                updateStatus('❌ لا يوجد بث حالياً', 'error');
+                return;
+            }
+            
+            updateStatus('🔄 إعادة تحميل البث...', 'info');
+            
+            // إعادة تعيين الفيديو
+            video.src = '';
+            video.load();
+            
+            // تدمير المشغلات القديمة
+            if (hlsPlayer) {
+                hlsPlayer.destroy();
+                hlsPlayer = null;
+            }
+            
+            if (dashPlayer) {
+                dashPlayer.destroy();
+                dashPlayer = null;
+            }
+            
+            // إعادة التشغيل بعد فترة قصيرة
+            setTimeout(() => {
+                playStream(currentStreamUrl);
+            }, 500);
+        }
+        
+        // ملء الشاشة
         function toggleFullscreen() {
             if (!document.fullscreenElement) {
                 if (video.requestFullscreen) {
@@ -320,30 +533,83 @@
                 }
             }
         }
-
-        // إضافة مستمع لأخطاء الفيديو
-        video.addEventListener('error', (e) => {
-            updateStatus('❌ حدث خطأ في تشغيل الفيديو', 'error');
-            console.error('Video Error:', video.error);
-            
-            let errorMsg = 'خطأ غير معروف';
-            if (video.error) {
-                switch(video.error.code) {
-                    case 1: errorMsg = 'تم إلغاء التحميل'; break;
-                    case 2: errorMsg = 'خطأ في الشبكة'; break;
-                    case 3: errorMsg = 'خطأ في فك التشفير'; break;
-                    case 4: errorMsg = 'الفيديو غير مدعوم'; break;
-                }
-            }
-            updateStreamInfo(streamInfoEl.innerHTML + `<br><strong>الحالة:</strong> ❌ ${errorMsg}`);
-        });
-
-        // بدء المشغل عند تحميل الصفحة
-        document.addEventListener('DOMContentLoaded', initPlayer);
         
-        // للاختبار في الكونسول
-        console.log('Leo TV Player Loaded');
-        console.log('URL Parameters:', new URLSearchParams(window.location.search).toString());
+        // تهيئة المشغل
+        async function initPlayer() {
+            logDebug('بدء تهيئة المشغل...', 'info');
+            
+            const params = new URLSearchParams(window.location.search);
+            const encodedUrl = params.get('src');
+            
+            if (!encodedUrl) {
+                showNoStreamMessage();
+                return;
+            }
+            
+            let streamUrl;
+            try {
+                streamUrl = atob(decodeURIComponent(encodedUrl));
+                logDebug(`فك تشفير الرابط: ${streamUrl}`, 'success');
+            } catch (e) {
+                streamUrl = decodeURIComponent(encodedUrl);
+                logDebug(`استخدام الرابط مباشرة: ${streamUrl}`, 'warning');
+            }
+            
+            await playStream(streamUrl);
+        }
+        
+        // عرض رسالة عند عدم وجود رابط
+        function showNoStreamMessage() {
+            updateStatus('❌ لم يتم تحديد قناة', 'error');
+            
+            streamInfoEl.innerHTML = `
+                <div style="text-align: center; padding: 30px;">
+                    <h3>لم يتم تحديد قناة للمشاهدة</h3>
+                    <p>يجب اختيار قناة من الصفحة الرئيسية أولاً</p>
+                    <button onclick="window.location.href='index.html'" 
+                            style="padding: 15px 30px; 
+                                   background: linear-gradient(135deg, #667eea, #764ba2); 
+                                   color: white; 
+                                   border: none; 
+                                   border-radius: 10px; 
+                                   font-size: 18px; 
+                                   cursor: pointer; 
+                                   margin-top: 20px;">
+                        ← العودة إلى القنوات
+                    </button>
+                    
+                    <div style="margin-top: 30px;">
+                        <h4>أو جرب روابط تجريبية:</h4>
+                        <button onclick="testStream('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')" 
+                                style="padding: 10px 20px; margin: 5px;">
+                            HLS تجريبي
+                        </button>
+                        <button onclick="testStream('https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd')" 
+                                style="padding: 10px 20px; margin: 5px;">
+                            DASH تجريبي
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // تجربة رابط مباشر
+        function testStream(url) {
+            currentStreamUrl = url;
+            updateStatus(`🔧 جرب رابط تجريبي: ${url}`, 'info');
+            playStream(url);
+        }
+        
+        // بدء التشغيل عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', () => {
+            logDebug('صفحة المشغل محملة', 'success');
+            initPlayer();
+        });
+        
+        // مستمع للأخطاء العامة
+        window.addEventListener('error', (e) => {
+            logDebug(`خطأ عام: ${e.message} في ${e.filename}:${e.lineno}`, 'error');
+        });
     </script>
 </body>
 </html>
