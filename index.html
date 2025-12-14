@@ -87,6 +87,21 @@ input::placeholder {
   color: white;
   font-size: .85rem;
 }
+
+/* إضافة مؤشر تحميل للصور */
+.card img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  margin-bottom: 8px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 5px;
+}
+
+.card img:not([src]) {
+  visibility: hidden;
+}
 </style>
 </head>
 
@@ -104,7 +119,6 @@ input::placeholder {
 <div class="channels glass" id="channels"></div>
 
 <script>
-
 const channelsData = [
   {
     name: "beIN SPORT 1",
@@ -216,12 +230,24 @@ function render(list) {
     const div = document.createElement("div");
     div.className = "card";
     div.innerHTML = `
-      <img loading="lazy" src="${ch.logo}">
+      <img loading="lazy" src="${ch.logo}" alt="${ch.name}">
       <span>${ch.name}</span>
     `;
+    
+    // حدث النقر المتوافق مع المشغل الجديد
     div.onclick = () => {
-      location.href = `player.html?src=${encodeURIComponent(btoa(ch.url))}`;
+      // إنشاء باراميترات متوافقة مع المشغل الجديد
+      const params = new URLSearchParams({
+        url: encodeURIComponent(ch.url),
+        name: encodeURIComponent(ch.name),
+        group: encodeURIComponent(ch.group || 'beIN Sports'),
+        quality: encodeURIComponent(ch.quality || 'HD')
+      });
+      
+      // الانتقال إلى المشغل مع جميع البيانات
+      location.href = `player.html?${params.toString()}`;
     };
+    
     container.appendChild(div);
   });
 }
@@ -231,7 +257,12 @@ search.oninput = () => {
   render(channelsData.filter(c => c.name.toLowerCase().includes(v)));
 };
 
+// تحميل الصفحة
 render(channelsData);
+
+// إضافة رسالة تحميل
+console.log('✅ Leo TV - الواجهة جاهزة');
+console.log(`📺 عدد القنوات: ${channelsData.length}`);
 </script>
 
 </body>
