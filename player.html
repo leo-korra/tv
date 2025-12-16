@@ -6,9 +6,6 @@
 <title>LeoTV Player</title>
 
 <script src="https://cdn.jsdelivr.net/clappr/latest/clappr.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/clappr-level-selector-plugin@latest/dist/level-selector.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/clappr-playback-rate-plugin@latest/dist/playback-rate.min.js"></script>
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
 
@@ -44,6 +41,7 @@ body, html {
 #player {
   width: 100%;
   height: 100%;
+  background: #000;
 }
 
 .player-header {
@@ -153,20 +151,21 @@ body, html {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.95);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   color: white;
+  text-align: center;
 }
 
 .loading-spinner {
-  width: 50px;
-  height: 50px;
-  border: 3px solid rgba(255, 255, 255, 0.1);
-  border-top: 3px solid #667eea;
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top: 4px solid #667eea;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 20px;
@@ -200,8 +199,27 @@ body, html {
   margin-bottom: 20px;
 }
 
-.error-overlay button {
+.error-overlay h2 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: #fff;
+}
+
+.error-overlay p {
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+.error-buttons {
+  display: flex;
+  gap: 10px;
   margin-top: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.error-btn {
   background: #667eea;
   color: white;
   border: none;
@@ -209,22 +227,35 @@ body, html {
   border-radius: 8px;
   cursor: pointer;
   font-family: 'Cairo', sans-serif;
-  font-size: 1rem;
+  font-size: 0.9rem;
+  transition: all 0.3s;
 }
 
-/*===== إصلاح اللوغو بالقوة =====*/
-.clappr-watermark,
-.clappr-watermark[data-watermark],
-div[data-watermark] img,
-.player[data-watermark] img,
-.player-poster[data-watermark] img {
+.error-btn:hover {
+  background: #5a6fd8;
+  transform: translateY(-2px);
+}
+
+.error-btn.secondary {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.error-btn.secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* إصلاح واجهة Clappr */
+.media-control {
+  direction: ltr !important;
+}
+
+/* إصلاح اللوغو */
+.clappr-watermark {
   width: 40px !important;
   height: auto !important;
   position: absolute !important;
   left: 10px !important;
   bottom: 10px !important;
-  top: auto !important;
-  right: auto !important;
   z-index: 999999 !important;
   opacity: 0.9 !important;
   pointer-events: none !important;
@@ -248,6 +279,16 @@ div[data-watermark] img,
   .channel-logo {
     width: 35px;
     height: 35px;
+  }
+  
+  .error-buttons {
+    flex-direction: column;
+    width: 80%;
+  }
+  
+  .error-btn {
+    width: 100%;
+    margin-bottom: 10px;
   }
 }
 </style>
@@ -285,8 +326,9 @@ div[data-watermark] img,
     
     <div id="loading" class="loading-overlay">
       <div class="loading-spinner"></div>
-      <p>جاري تحميل البث...</p>
-      <p style="font-size: 0.9rem; color: rgba(255,255,255,0.7); margin-top: 10px;" id="loading-url"></p>
+      <h2>جاري تحميل البث...</h2>
+      <p id="loading-status">جاري التحقق من الرابط والبدء بالتشغيل</p>
+      <p id="loading-url" style="font-size: 0.8rem; color: rgba(255,255,255,0.6); margin-top: 10px; max-width: 90%; word-break: break-all;"></p>
     </div>
   </div>
 </div>
@@ -300,104 +342,190 @@ const channelLogo = decodeURIComponent(urlParams.get('logo') || '');
 const channelGroup = decodeURIComponent(urlParams.get('group') || 'beIN Sports');
 const channelQuality = decodeURIComponent(urlParams.get('quality') || 'HD');
 
+// روابط احتياطية للقنوات
+const backupStreams = {
+  "beIN SPORT 1": [
+    "https://stream2.fastdelivery.net/hls/bein1/index.m3u8",
+    "https://live.kuwan8.com:9999/live/beinsports1/8500.m3u8",
+    "http://cdn.elsalvadordigital.com:1935/wowza5/ngrp:bein1.stream_all/playlist.m3u8"
+  ],
+  "beIN SPORT 2": [
+    "https://stream2.fastdelivery.net/hls/bein2/index.m3u8",
+    "https://live.kuwan8.com:9999/live/beinsports2/8500.m3u8"
+  ],
+  "beIN SPORT 3": [
+    "https://stream2.fastdelivery.net/hls/bein3/index.m3u8",
+    "https://live.kuwan8.com:9999/live/beinsports3/8500.m3u8"
+  ],
+  "beIN SPORT 4": [
+    "https://stream2.fastdelivery.net/hls/bein4/index.m3u8",
+    "https://live.kuwan8.com:9999/live/beinsports4/8500.m3u8"
+  ],
+  "beIN SPORT 5": [
+    "https://stream2.fastdelivery.net/hls/bein5/index.m3u8",
+    "https://live.kuwan8.com:9999/live/beinsports5/8500.m3u8"
+  ],
+  "beIN SPORT 6": [
+    "https://stream2.fastdelivery.net/hls/bein6/index.m3u8",
+    "https://live.kuwan8.com:9999/live/beinsports6/8500.m3u8"
+  ],
+  "beIN SPORT 7": [
+    "https://stream2.fastdelivery.net/hls/bein7/index.m3u8",
+    "https://live.kuwan8.com:9999/live/beinsports7/8500.m3u8"
+  ],
+  "beIN SPORT 8": [
+    "https://stream2.fastdelivery.net/hls/bein8/index.m3u8",
+    "https://live.kuwan8.com:9999/live/beinsports8/8500.m3u8"
+  ],
+  "beIN SPORT 9": [
+    "https://stream2.fastdelivery.net/hls/bein9/index.m3u8",
+    "https://live.kuwan8.com:9999/live/beinsports9/8500.m3u8"
+  ]
+};
+
+let player;
+let currentStreamIndex = 0;
+let backupStreamsArray = [];
+
 // تحديث المعلومات في الهيدر
 document.getElementById('channel-name').textContent = channelName;
 document.getElementById('channel-group').textContent = channelGroup;
 document.getElementById('quality-display').textContent = channelQuality;
-document.getElementById('loading-url').textContent = `جاري تحميل: ${streamUrl.substring(0, 50)}...`;
+document.getElementById('loading-url').textContent = `الرابط: ${streamUrl.substring(0, 60)}...`;
 
-if (channelLogo) {
-  document.getElementById('channel-logo').src = channelLogo;
-  document.getElementById('channel-logo').onerror = function() {
-    this.src = 'https://via.placeholder.com/40x40/1a1a2e/ffffff?text=TV';
+// تحميل صورة القناة
+const logoImg = document.getElementById('channel-logo');
+if (channelLogo && channelLogo.startsWith('http')) {
+  logoImg.src = channelLogo;
+  logoImg.onerror = function() {
+    this.src = 'https://via.placeholder.com/40x40/1a1a2e/667eea?text=' + channelName.charAt(0);
   };
 } else {
-  document.getElementById('channel-logo').src = 'https://via.placeholder.com/40x40/1a1a2e/ffffff?text=TV';
+  logoImg.src = 'https://via.placeholder.com/40x40/1a1a2e/667eea?text=' + channelName.charAt(0);
 }
 
 // تحديث عنوان الصفحة
 document.title = `${channelName} - LeoTV Player`;
 
-let player;
-
 function initializePlayer() {
-  if (!streamUrl) {
-    showError('لم يتم تحديد رابط البث');
-    return;
+  // إعداد روابط احتياطية
+  backupStreamsArray = [streamUrl];
+  if (backupStreams[channelName]) {
+    backupStreamsArray = [streamUrl, ...backupStreams[channelName]];
   }
   
+  document.getElementById('loading-status').textContent = `جاري تجربة الرابط (${currentStreamIndex + 1}/${backupStreamsArray.length})...`;
+  document.getElementById('loading-url').textContent = `جاري تجربة: ${backupStreamsArray[currentStreamIndex].substring(0, 70)}...`;
+  
   try {
+    // تدمير المشغل القديم إذا كان موجوداً
+    if (player) {
+      player.destroy();
+    }
+    
     player = new Clappr.Player({
-      source: streamUrl,
+      source: backupStreamsArray[currentStreamIndex],
       autoPlay: true,
       height: '100%',
       width: '100%',
       parentId: '#player',
       mute: false,
-      volume: 100,
+      volume: 50,
       
-      // ووتر مارك مخصص لـ Leo TV
-      watermark: 'https://g.top4top.io/p_3619x2ki01.png',
+      // ووتر مارك Leo TV
+      watermark: 'https://i.ibb.co/0jQzY2L/leotv-logo.png',
       position: 'bottom-left',
-      watermarkLink: 'https://leotv.com',
+      watermarkLink: '#',
       
-      // إضافة إضافات
-      plugins: [
-        window.LevelSelector,
-        window.PlaybackRatePlugin
-      ],
-      
-      // إعدادات LevelSelector
-      levelSelectorConfig: {
-        title: 'جودة الفيديو',
-        labels: {
-          2: 'عالية (1080p)',
-          1: 'متوسطة (720p)',
-          0: 'منخفضة (480p)'
-        }
-      },
-      
-      // إعدادات PlaybackRate
-      playbackRateConfig: {
-        defaultValue: 1,
-        options: [0.5, 0.75, 1, 1.25, 1.5, 2]
+      // إعدادات HLS
+      hlsjsConfig: {
+        enableWorker: true,
+        liveSyncDurationCount: 7,
+        liveMaxLatencyDurationCount: 12,
+        abrEwmaFastLive: 3,
+        abrEwmaSlowLive: 9,
+        abrEwmaFastVoD: 3,
+        abrEwmaSlowVoD: 9,
+        maxBufferLength: 30,
+        maxMaxBufferLength: 60,
+        maxBufferSize: 60 * 1000 * 1000,
+        maxBufferHole: 0.5,
+        maxFragLookUpTolerance: 0.2,
+        liveDurationInfinity: true,
+        enableDateRangeMetadataCues: true
       },
       
       // إعدادات مشغل الفيديو
       mediacontrol: {
-        seekbar: '#E3E3E3',
+        seekbar: '#667eea',
         buttons: '#FFFFFF'
       },
       
-      // تفعيل خاصية البث المباشر
-      hlsjsConfig: {
-        enableWorker: true,
-        liveSyncDurationCount: 3,
-        liveMaxLatencyDurationCount: 10
-      }
+      // إعدادات المشغل
+      playbackNotSupportedMessage: 'المتصفح الحالي لا يدعم تشغيل هذا النوع من البث',
+      preload: 'auto',
+      actualLiveTime: true,
+      hideVolumeBar: false,
+      disableKeyboardShortcuts: false,
+      persistConfig: true
     });
     
-    // إخفاء شاشة التحميل عند بدء التشغيل
+    // إخفاء شاشة التحميل عند الاستعداد
     player.on('ready', function() {
       setTimeout(() => {
         document.getElementById('loading').style.display = 'none';
+        document.getElementById('loading-status').textContent = 'البث يعمل الآن';
       }, 1000);
     });
     
-    // معالجة الأخطاء
-    player.on('error', function(error) {
-      console.error('خطأ في المشغل:', error);
-      showError('حدث خطأ في تحميل البث. يرجى المحاولة مرة أخرى.');
+    // عند بدء التشغيل
+    player.on('play', function() {
+      setTimeout(() => {
+        document.getElementById('loading').style.display = 'none';
+      }, 500);
     });
     
-    // حدث عند انتهاء البث
+    // عند حدوث خطأ
+    player.on('error', function(error) {
+      console.error('خطأ في المشغل:', error);
+      
+      // إذا كان هناك رابط احتياطي آخر، جربه
+      if (currentStreamIndex < backupStreamsArray.length - 1) {
+        currentStreamIndex++;
+        document.getElementById('loading').style.display = 'flex';
+        document.getElementById('loading-status').textContent = `الرابط السابق لم يعمل، جاري تجربة رابط احتياطي (${currentStreamIndex + 1}/${backupStreamsArray.length})...`;
+        document.getElementById('loading-url').textContent = `جاري تجربة: ${backupStreamsArray[currentStreamIndex].substring(0, 70)}...`;
+        
+        setTimeout(() => {
+          initializePlayer();
+        }, 1000);
+      } else {
+        // لا توجد روابط أخرى، عرض رسالة الخطأ
+        showError();
+      }
+    });
+    
+    // عند انتهاء البث
     player.on('ended', function() {
       showError('انتهى البث المباشر');
     });
     
+    // عند توقف البث
+    player.on('buffering', function() {
+      document.getElementById('loading').style.display = 'flex';
+      document.getElementById('loading-status').textContent = 'جاري تحميل البيانات...';
+    });
+    
+    // عند استئناف البث
+    player.on('buffering:stop', function() {
+      setTimeout(() => {
+        document.getElementById('loading').style.display = 'none';
+      }, 500);
+    });
+    
   } catch (error) {
     console.error('خطأ في تهيئة المشغل:', error);
-    showError('تعذر تشغيل المشغل. يرجى التحقق من المتصفح وإعادة المحاولة.');
+    showError();
   }
 }
 
@@ -406,15 +534,54 @@ function showError(message) {
   
   const errorDiv = document.createElement('div');
   errorDiv.className = 'error-overlay';
+  
+  const errorMessage = message || `
+    <p>تعذر تشغيل القناة "${channelName}"</p>
+    <p>الأسباب المحتملة:</p>
+    <p style="font-size: 0.8rem; color: rgba(255,255,255,0.7);">
+      1. الرابط غير صالح أو منتهي الصلاحية<br>
+      2. القناة غير متاحة في منطقتك<br>
+      3. مشكلة في اتصال الإنترنت<br>
+      4. المتصفح لا يدعم تشغيل HLS
+    </p>
+  `;
+  
   errorDiv.innerHTML = `
     <i class="fas fa-exclamation-triangle"></i>
     <h2>عذراً!</h2>
-    <p>${message}</p>
-    <button onclick="goBack()">العودة للقائمة الرئيسية</button>
-    <button onclick="location.reload()" style="background: #4CAF50; margin-top: 10px;">إعادة المحاولة</button>
+    ${errorMessage}
+    <div class="error-buttons">
+      <button class="error-btn" onclick="tryNextStream()">
+        <i class="fas fa-redo"></i> تجربة رابط آخر
+      </button>
+      <button class="error-btn secondary" onclick="goBack()">
+        <i class="fas fa-arrow-right"></i> العودة للقائمة
+      </button>
+      <button class="error-btn secondary" onclick="location.reload()">
+        <i class="fas fa-sync-alt"></i> إعادة تحميل
+      </button>
+    </div>
   `;
   
   document.getElementById('player-wrapper').appendChild(errorDiv);
+}
+
+function tryNextStream() {
+  if (currentStreamIndex < backupStreamsArray.length - 1) {
+    currentStreamIndex++;
+    document.getElementById('player-wrapper').innerHTML = `
+      <div id="player"></div>
+      <div id="loading" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <h2>جاري تحميل البث...</h2>
+        <p id="loading-status">جربة رابط احتياطي (${currentStreamIndex + 1}/${backupStreamsArray.length})</p>
+        <p id="loading-url" style="font-size: 0.8rem; color: rgba(255,255,255,0.6); margin-top: 10px; max-width: 90%; word-break: break-all;">${backupStreamsArray[currentStreamIndex].substring(0, 80)}...</p>
+      </div>
+    `;
+    initializePlayer();
+  } else {
+    showError('لا توجد روابط أخرى متاحة');
+  }
 }
 
 function toggleFullscreen() {
@@ -446,24 +613,19 @@ function toggleFullscreen() {
 }
 
 function goBack() {
-  if (window.history.length > 1) {
-    window.history.back();
-  } else {
+  if (window.opener && !window.opener.closed) {
     window.close();
+  } else {
+    window.history.length > 1 ? window.history.back() : window.close();
   }
 }
 
 // التحكم في ملء الشاشة
 document.addEventListener('fullscreenchange', updateFullscreenButton);
 document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
-document.addEventListener('mozfullscreenchange', updateFullscreenButton);
-document.addEventListener('MSFullscreenChange', updateFullscreenButton);
 
 function updateFullscreenButton() {
-  if (document.fullscreenElement || 
-      document.webkitFullscreenElement || 
-      document.mozFullScreenElement || 
-      document.msFullscreenElement) {
+  if (document.fullscreenElement || document.webkitFullscreenElement) {
     document.querySelector('.fullscreen-text').textContent = 'تصغير';
     document.querySelector('.fullscreen-btn i').className = 'fas fa-compress';
   } else {
@@ -475,7 +637,7 @@ function updateFullscreenButton() {
 // اختصارات لوحة المفاتيح
 document.addEventListener('keydown', function(e) {
   // مفتاح ESC للخروج من ملء الشاشة
-  if (e.key === 'Escape' && document.fullscreenElement) {
+  if (e.key === 'Escape' && (document.fullscreenElement || document.webkitFullscreenElement)) {
     toggleFullscreen();
   }
   
@@ -497,10 +659,33 @@ document.addEventListener('keydown', function(e) {
     const currentVolume = player.getVolume();
     player.setVolume(Math.max(currentVolume - 10, 0));
   }
+  
+  // مفتاح F للملء الشاشة
+  if (e.key === 'f' || e.key === 'F') {
+    e.preventDefault();
+    toggleFullscreen();
+  }
 });
 
 // بدء تشغيل المشغل عند تحميل الصفحة
-window.addEventListener('DOMContentLoaded', initializePlayer);
+window.addEventListener('DOMContentLoaded', function() {
+  setTimeout(initializePlayer, 500);
+});
+
+// محاولة إعادة التشغيل عند استعادة الاتصال
+window.addEventListener('online', function() {
+  console.log('تم استعادة الاتصال بالإنترنت');
+  if (player && !player.isPlaying()) {
+    setTimeout(() => {
+      player.play();
+    }, 1000);
+  }
+});
+
+window.addEventListener('offline', function() {
+  console.log('فقد الاتصال بالإنترنت');
+  showError('فقد الاتصال بالإنترنت. يرجى التحقق من اتصالك وإعادة المحاولة.');
+});
 </script>
 
 </body>
