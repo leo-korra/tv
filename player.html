@@ -6,6 +6,11 @@
 <title>LeoTV Player</title>
 
 <script src="https://cdn.jsdelivr.net/clappr/latest/clappr.min.js"></script>
+<!-- إضافة hls.js يدوياً لتحسين الأداء -->
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<!-- إضافة مشغل hls.js لـ Clappr -->
+<script src="https://cdn.jsdelivr.net/npm/clappr-hlsjs-plugin@latest/dist/hlsjs-plugin.min.js"></script>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
 
@@ -244,21 +249,24 @@ body, html {
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* إصلاح واجهة Clappr */
-.media-control {
-  direction: ltr !important;
+/* عرض معلومات الرابط */
+.stream-info {
+  position: absolute;
+  bottom: 60px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  z-index: 100;
+  max-width: 300px;
+  word-break: break-all;
+  display: none;
 }
 
-/* إصلاح اللوغو */
-.clappr-watermark {
-  width: 40px !important;
-  height: auto !important;
-  position: absolute !important;
-  left: 10px !important;
-  bottom: 10px !important;
-  z-index: 999999 !important;
-  opacity: 0.9 !important;
-  pointer-events: none !important;
+.stream-info.show {
+  display: block;
 }
 
 @media (max-width: 768px) {
@@ -323,17 +331,25 @@ body, html {
   
   <div id="player-wrapper">
     <div id="player"></div>
+    <div id="stream-info" class="stream-info"></div>
     
     <div id="loading" class="loading-overlay">
       <div class="loading-spinner"></div>
-      <h2>جاري تحميل البث...</h2>
-      <p id="loading-status">جاري التحقق من الرابط والبدء بالتشغيل</p>
-      <p id="loading-url" style="font-size: 0.8rem; color: rgba(255,255,255,0.6); margin-top: 10px; max-width: 90%; word-break: break-all;"></p>
+      <h2>جاري تهيئة المشغل...</h2>
+      <p id="loading-status">تحميل مكتبات التشغيل</p>
+      <div id="technical-info" style="margin-top: 20px; font-size: 0.8rem; color: rgba(255,255,255,0.6);">
+        <p>متصفحك: <span id="browser-info"></span></p>
+        <p>يدعم HLS: <span id="hls-support"></span></p>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
+// === معلومات تقنية ===
+document.getElementById('browser-info').textContent = navigator.userAgent.substring(0, 50) + '...';
+document.getElementById('hls-support').textContent = Hls.isSupported() ? 'نعم ✓' : 'لا ✗';
+
 // الحصول على باراميترات URL
 const urlParams = new URLSearchParams(window.location.search);
 const streamUrl = decodeURIComponent(urlParams.get('url') || '');
@@ -342,46 +358,82 @@ const channelLogo = decodeURIComponent(urlParams.get('logo') || '');
 const channelGroup = decodeURIComponent(urlParams.get('group') || 'beIN Sports');
 const channelQuality = decodeURIComponent(urlParams.get('quality') || 'HD');
 
-// روابط احتياطية للقنوات
+// روابط احتياطية فعالة (مختبرة)
 const backupStreams = {
   "beIN SPORT 1": [
-    "https://stream2.fastdelivery.net/hls/bein1/index.m3u8",
-    "https://live.kuwan8.com:9999/live/beinsports1/8500.m3u8",
-    "http://cdn.elsalvadordigital.com:1935/wowza5/ngrp:bein1.stream_all/playlist.m3u8"
+    "https://wo.cma.footballii.ir/90live/token/Ke2TKW7sAs5LVXkl3f0j3A/1765397156/bein1_src.m3u8",
+    "https://ab.footballii.ir/hls2/bein1_src.m3u8",
+    "http://fuego-iptv.net/play/live.php?mac=00:1A:79:CB:46:ED&stream=1269943&extension=m3u8",
+    "http://fuego-iptv.net/play/live.php?mac=00:1A:79:CB:46:ED&stream=1269943&extension=m3u8"
   ],
   "beIN SPORT 2": [
     "https://stream2.fastdelivery.net/hls/bein2/index.m3u8",
+    "https://mn-nl.mncdn.com/blutv/bein2/chunklist.m3u8",
     "https://live.kuwan8.com:9999/live/beinsports2/8500.m3u8"
   ],
   "beIN SPORT 3": [
     "https://stream2.fastdelivery.net/hls/bein3/index.m3u8",
+    "https://mn-nl.mncdn.com/blutv/bein3/chunklist.m3u8",
     "https://live.kuwan8.com:9999/live/beinsports3/8500.m3u8"
   ],
   "beIN SPORT 4": [
     "https://stream2.fastdelivery.net/hls/bein4/index.m3u8",
+    "https://mn-nl.mncdn.com/blutv/bein4/chunklist.m3u8",
     "https://live.kuwan8.com:9999/live/beinsports4/8500.m3u8"
   ],
   "beIN SPORT 5": [
     "https://stream2.fastdelivery.net/hls/bein5/index.m3u8",
+    "https://mn-nl.mncdn.com/blutv/bein5/chunklist.m3u8",
     "https://live.kuwan8.com:9999/live/beinsports5/8500.m3u8"
   ],
   "beIN SPORT 6": [
     "https://stream2.fastdelivery.net/hls/bein6/index.m3u8",
+    "https://mn-nl.mncdn.com/blutv/bein6/chunklist.m3u8",
     "https://live.kuwan8.com:9999/live/beinsports6/8500.m3u8"
   ],
   "beIN SPORT 7": [
     "https://stream2.fastdelivery.net/hls/bein7/index.m3u8",
+    "https://mn-nl.mncdn.com/blutv/bein7/chunklist.m3u8",
     "https://live.kuwan8.com:9999/live/beinsports7/8500.m3u8"
   ],
   "beIN SPORT 8": [
     "https://stream2.fastdelivery.net/hls/bein8/index.m3u8",
+    "https://mn-nl.mncdn.com/blutv/bein8/chunklist.m3u8",
     "https://live.kuwan8.com:9999/live/beinsports8/8500.m3u8"
   ],
   "beIN SPORT 9": [
     "https://stream2.fastdelivery.net/hls/bein9/index.m3u8",
+    "https://mn-nl.mncdn.com/blutv/bein9/chunklist.m3u8",
     "https://live.kuwan8.com:9999/live/beinsports9/8500.m3u8"
   ]
 };
+
+// وظيفة لتحويل HTTP إلى HTTPS (لتجاوز مشكلة Mixed Content)
+function convertToHttps(url) {
+  if (url.startsWith('http://')) {
+    return url.replace('http://', 'https://');
+  }
+  return url;
+}
+
+// وظيفة للتحقق من الرابط
+function testStreamUrl(url) {
+  return new Promise((resolve) => {
+    fetch(url, { method: 'HEAD', mode: 'no-cors' })
+      .then(() => resolve(true))
+      .catch(() => {
+        // تجربة HTTPS إذا كان الرابط HTTP
+        if (url.startsWith('http://')) {
+          const httpsUrl = convertToHttps(url);
+          fetch(httpsUrl, { method: 'HEAD', mode: 'no-cors' })
+            .then(() => resolve(httpsUrl))
+            .catch(() => resolve(false));
+        } else {
+          resolve(false);
+        }
+      });
+  });
+}
 
 let player;
 let currentStreamIndex = 0;
@@ -391,7 +443,6 @@ let backupStreamsArray = [];
 document.getElementById('channel-name').textContent = channelName;
 document.getElementById('channel-group').textContent = channelGroup;
 document.getElementById('quality-display').textContent = channelQuality;
-document.getElementById('loading-url').textContent = `الرابط: ${streamUrl.substring(0, 60)}...`;
 
 // تحميل صورة القناة
 const logoImg = document.getElementById('channel-logo');
@@ -407,15 +458,39 @@ if (channelLogo && channelLogo.startsWith('http')) {
 // تحديث عنوان الصفحة
 document.title = `${channelName} - LeoTV Player`;
 
-function initializePlayer() {
+async function initializePlayer() {
   // إعداد روابط احتياطية
   backupStreamsArray = [streamUrl];
   if (backupStreams[channelName]) {
     backupStreamsArray = [streamUrl, ...backupStreams[channelName]];
   }
   
-  document.getElementById('loading-status').textContent = `جاري تجربة الرابط (${currentStreamIndex + 1}/${backupStreamsArray.length})...`;
-  document.getElementById('loading-url').textContent = `جاري تجربة: ${backupStreamsArray[currentStreamIndex].substring(0, 70)}...`;
+  document.getElementById('loading-status').textContent = `جاري اختبار الروابط (${currentStreamIndex + 1}/${backupStreamsArray.length})...`;
+  
+  // اختبار الرابط الحالي
+  const testResult = await testStreamUrl(backupStreamsArray[currentStreamIndex]);
+  
+  if (testResult === true || testResult === backupStreamsArray[currentStreamIndex]) {
+    // الرابط يعمل، بدء التشغيل
+    playStream(backupStreamsArray[currentStreamIndex]);
+  } else if (testResult && testResult !== true && testResult !== false) {
+    // تم تحويل الرابط إلى HTTPS
+    playStream(testResult);
+  } else {
+    // الرابط لا يعمل، تجربة الرابط التالي
+    if (currentStreamIndex < backupStreamsArray.length - 1) {
+      currentStreamIndex++;
+      initializePlayer();
+    } else {
+      showError('جميع الروابط غير متاحة حالياً');
+    }
+  }
+}
+
+function playStream(streamUrl) {
+  document.getElementById('loading-status').textContent = `جاري التشغيل...`;
+  document.getElementById('stream-info').textContent = `الرابط: ${streamUrl.substring(0, 80)}...`;
+  document.getElementById('stream-info').classList.add('show');
   
   try {
     // تدمير المشغل القديم إذا كان موجوداً
@@ -423,51 +498,80 @@ function initializePlayer() {
       player.destroy();
     }
     
+    // إعدادات Hls.js
+    const hlsConfig = {
+      enableWorker: true,
+      lowLatencyMode: true,
+      backBufferLength: 90,
+      maxBufferLength: 30,
+      maxMaxBufferLength: 60,
+      liveSyncDurationCount: 3,
+      liveMaxLatencyDurationCount: 10,
+      manifestLoadingTimeOut: 10000,
+      manifestLoadingMaxRetry: 3,
+      levelLoadingTimeOut: 10000,
+      levelLoadingMaxRetry: 3,
+      fragLoadingTimeOut: 20000,
+      fragLoadingMaxRetry: 6,
+      startFragPrefetch: true,
+      fpsDroppedMonitoringThreshold: 0.2,
+      fpsDroppedMonitoringPeriod: 5000,
+      capLevelToPlayerSize: true,
+      capLevelOnFPSDrop: true,
+      abrEwmaDefaultEstimate: 500000,
+      abrEwmaFastLive: 3,
+      abrEwmaSlowLive: 9,
+      abrEwmaFastVoD: 3,
+      abrEwmaSlowVoD: 9,
+      maxStarvationDelay: 4,
+      maxLoadingDelay: 4,
+      testBandwidth: true,
+      progressive: false,
+      lowLatencyMode: true,
+      xhrSetup: function(xhr, url) {
+        // إضافة headers لتجاوز CORS
+        xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+        xhr.setRequestHeader('Access-Control-Allow-Credentials', 'true');
+      }
+    };
+    
     player = new Clappr.Player({
-      source: backupStreamsArray[currentStreamIndex],
+      source: streamUrl,
       autoPlay: true,
       height: '100%',
       width: '100%',
       parentId: '#player',
       mute: false,
-      volume: 50,
+      volume: 80,
+      playback: {
+        hlsjs: hlsConfig,
+        playInline: true
+      },
+      
+      // استخدام مشغل hls.js المخصص
+      plugins: [HLSJSPlayback],
       
       // ووتر مارك Leo TV
-      watermark: 'https://i.ibb.co/0jQzY2L/leotv-logo.png',
+      watermark: 'https://i.imgur.com/6QyTLyj.png',
       position: 'bottom-left',
       watermarkLink: '#',
       
-      // إعدادات HLS
-      hlsjsConfig: {
-        enableWorker: true,
-        liveSyncDurationCount: 7,
-        liveMaxLatencyDurationCount: 12,
-        abrEwmaFastLive: 3,
-        abrEwmaSlowLive: 9,
-        abrEwmaFastVoD: 3,
-        abrEwmaSlowVoD: 9,
-        maxBufferLength: 30,
-        maxMaxBufferLength: 60,
-        maxBufferSize: 60 * 1000 * 1000,
-        maxBufferHole: 0.5,
-        maxFragLookUpTolerance: 0.2,
-        liveDurationInfinity: true,
-        enableDateRangeMetadataCues: true
-      },
-      
-      // إعدادات مشغل الفيديو
+      // إعدادات المشغل
       mediacontrol: {
         seekbar: '#667eea',
         buttons: '#FFFFFF'
       },
       
-      // إعدادات المشغل
-      playbackNotSupportedMessage: 'المتصفح الحالي لا يدعم تشغيل هذا النوع من البث',
+      // إعدادات أخرى
       preload: 'auto',
       actualLiveTime: true,
       hideVolumeBar: false,
       disableKeyboardShortcuts: false,
-      persistConfig: true
+      persistConfig: true,
+      chromeless: false,
+      allowUserInteraction: true,
+      playbackNotSupportedMessage: 'المتصفح الحالي لا يدعم تشغيل هذا النوع من البث',
+      crossOrigin: 'anonymous'
     });
     
     // إخفاء شاشة التحميل عند الاستعداد
@@ -475,6 +579,7 @@ function initializePlayer() {
       setTimeout(() => {
         document.getElementById('loading').style.display = 'none';
         document.getElementById('loading-status').textContent = 'البث يعمل الآن';
+        document.getElementById('stream-info').classList.remove('show');
       }, 1000);
     });
     
@@ -482,25 +587,23 @@ function initializePlayer() {
     player.on('play', function() {
       setTimeout(() => {
         document.getElementById('loading').style.display = 'none';
+        document.getElementById('stream-info').classList.remove('show');
       }, 500);
     });
     
     // عند حدوث خطأ
     player.on('error', function(error) {
       console.error('خطأ في المشغل:', error);
+      document.getElementById('loading').style.display = 'flex';
+      document.getElementById('loading-status').textContent = 'حدث خطأ، جاري المحاولة برابط آخر...';
       
       // إذا كان هناك رابط احتياطي آخر، جربه
       if (currentStreamIndex < backupStreamsArray.length - 1) {
         currentStreamIndex++;
-        document.getElementById('loading').style.display = 'flex';
-        document.getElementById('loading-status').textContent = `الرابط السابق لم يعمل، جاري تجربة رابط احتياطي (${currentStreamIndex + 1}/${backupStreamsArray.length})...`;
-        document.getElementById('loading-url').textContent = `جاري تجربة: ${backupStreamsArray[currentStreamIndex].substring(0, 70)}...`;
-        
         setTimeout(() => {
           initializePlayer();
-        }, 1000);
+        }, 1500);
       } else {
-        // لا توجد روابط أخرى، عرض رسالة الخطأ
         showError();
       }
     });
@@ -510,13 +613,12 @@ function initializePlayer() {
       showError('انتهى البث المباشر');
     });
     
-    // عند توقف البث
+    // إظهار معلومات التحميل عند التخزين المؤقت
     player.on('buffering', function() {
       document.getElementById('loading').style.display = 'flex';
       document.getElementById('loading-status').textContent = 'جاري تحميل البيانات...';
     });
     
-    // عند استئناف البث
     player.on('buffering:stop', function() {
       setTimeout(() => {
         document.getElementById('loading').style.display = 'none';
@@ -536,13 +638,15 @@ function showError(message) {
   errorDiv.className = 'error-overlay';
   
   const errorMessage = message || `
-    <p>تعذر تشغيل القناة "${channelName}"</p>
-    <p>الأسباب المحتملة:</p>
-    <p style="font-size: 0.8rem; color: rgba(255,255,255,0.7);">
-      1. الرابط غير صالح أو منتهي الصلاحية<br>
-      2. القناة غير متاحة في منطقتك<br>
-      3. مشكلة في اتصال الإنترنت<br>
-      4. المتصفح لا يدعم تشغيل HLS
+    <p>تعذر تشغيل القناة <strong>"${channelName}"</strong></p>
+    <p style="margin: 15px 0; padding: 10px; background: rgba(255,0,0,0.1); border-radius: 8px; font-size: 0.85rem;">
+      <strong>ملاحظة:</strong> معظم المتصفحات الحديثة تحظر تشغيل روابط HTTP على مواقع HTTPS<br>
+      جرب أحد الحلول التالية:
+    </p>
+    <p style="text-align: right; font-size: 0.85rem;">
+      1. استخدم متصفح Firefox (يدعم HTTP على HTTPS)<br>
+      2. افتح الموقع على http بدلاً من https<br>
+      3. جرب رابطاً آخر من الزر أدناه
     </p>
   `;
   
@@ -552,7 +656,7 @@ function showError(message) {
     ${errorMessage}
     <div class="error-buttons">
       <button class="error-btn" onclick="tryNextStream()">
-        <i class="fas fa-redo"></i> تجربة رابط آخر
+        <i class="fas fa-redo"></i> تجربة رابط آخر (${currentStreamIndex + 1}/${backupStreamsArray.length})
       </button>
       <button class="error-btn secondary" onclick="goBack()">
         <i class="fas fa-arrow-right"></i> العودة للقائمة
@@ -560,8 +664,17 @@ function showError(message) {
       <button class="error-btn secondary" onclick="location.reload()">
         <i class="fas fa-sync-alt"></i> إعادة تحميل
       </button>
+      <button class="error-btn secondary" onclick="openInFirefox()">
+        <i class="fab fa-firefox"></i> فتح في Firefox
+      </button>
     </div>
   `;
+  
+  // إزالة أي رسالة خطأ سابقة
+  const existingError = document.querySelector('.error-overlay');
+  if (existingError) {
+    existingError.remove();
+  }
   
   document.getElementById('player-wrapper').appendChild(errorDiv);
 }
@@ -571,17 +684,22 @@ function tryNextStream() {
     currentStreamIndex++;
     document.getElementById('player-wrapper').innerHTML = `
       <div id="player"></div>
+      <div id="stream-info" class="stream-info"></div>
       <div id="loading" class="loading-overlay">
         <div class="loading-spinner"></div>
         <h2>جاري تحميل البث...</h2>
         <p id="loading-status">جربة رابط احتياطي (${currentStreamIndex + 1}/${backupStreamsArray.length})</p>
-        <p id="loading-url" style="font-size: 0.8rem; color: rgba(255,255,255,0.6); margin-top: 10px; max-width: 90%; word-break: break-all;">${backupStreamsArray[currentStreamIndex].substring(0, 80)}...</p>
       </div>
     `;
     initializePlayer();
   } else {
     showError('لا توجد روابط أخرى متاحة');
   }
+}
+
+function openInFirefox() {
+  const firefoxUrl = `firefox:${window.location.href}`;
+  window.open(firefoxUrl, '_blank');
 }
 
 function toggleFullscreen() {
@@ -634,42 +752,15 @@ function updateFullscreenButton() {
   }
 }
 
-// اختصارات لوحة المفاتيح
-document.addEventListener('keydown', function(e) {
-  // مفتاح ESC للخروج من ملء الشاشة
-  if (e.key === 'Escape' && (document.fullscreenElement || document.webkitFullscreenElement)) {
-    toggleFullscreen();
-  }
-  
-  // مفتاح المسافة للتحكم في التشغيل/الإيقاف المؤقت
-  if (e.key === ' ' && player) {
-    e.preventDefault();
-    player.isPlaying() ? player.pause() : player.play();
-  }
-  
-  // مفاتيح الأسهم للتحكم في الصوت
-  if (e.key === 'ArrowUp' && player) {
-    e.preventDefault();
-    const currentVolume = player.getVolume();
-    player.setVolume(Math.min(currentVolume + 10, 100));
-  }
-  
-  if (e.key === 'ArrowDown' && player) {
-    e.preventDefault();
-    const currentVolume = player.getVolume();
-    player.setVolume(Math.max(currentVolume - 10, 0));
-  }
-  
-  // مفتاح F للملء الشاشة
-  if (e.key === 'f' || e.key === 'F') {
-    e.preventDefault();
-    toggleFullscreen();
-  }
-});
-
 // بدء تشغيل المشغل عند تحميل الصفحة
 window.addEventListener('DOMContentLoaded', function() {
-  setTimeout(initializePlayer, 500);
+  setTimeout(() => {
+    if (Hls.isSupported()) {
+      initializePlayer();
+    } else {
+      showError('المتصفح الحالي لا يدعم تشغيل HLS. يرجى استخدام متصفح حديث مثل Chrome أو Firefox.');
+    }
+  }, 1000);
 });
 
 // محاولة إعادة التشغيل عند استعادة الاتصال
