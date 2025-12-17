@@ -2,13 +2,12 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>📺 Leo TV - منصة IPTV متطورة</title>
-<meta name="description" content="Leo TV - أفضل منصة لمشاهدة القنوات الرياضية والترفيهية بجودة عالية">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -18,354 +17,242 @@
   --primary-dark: #1d4ed8;
   --secondary: #7c3aed;
   --accent: #ec4899;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-  --dark: #0f172a;
-  --light: #f8fafc;
-  --gray: #64748b;
-  --gray-light: #e2e8f0;
   --glass-bg: rgba(255, 255, 255, 0.08);
   --glass-border: rgba(255, 255, 255, 0.12);
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  --blur: blur(20px);
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --blur: blur(15px);
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
 }
 
 body {
   font-family: 'Cairo', sans-serif;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-  color: var(--light);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  padding: 15px;
   min-height: 100vh;
   overflow-x: hidden;
-  line-height: 1.6;
 }
 
 body::before {
   content: '';
   position: fixed;
   top: 0;
-  right: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   background: 
-    radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.15) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(124, 58, 237, 0.15) 0%, transparent 40%),
-    radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.1) 0%, transparent 60%);
-  z-index: -2;
+    radial-gradient(circle at 20% 80%, rgba(37, 99, 235, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(124, 58, 237, 0.2) 0%, transparent 50%);
+  z-index: -1;
 }
 
-/* ========== تصميم شفاف زجاجي ========== */
-.glass {
+.glass-panel {
   background: var(--glass-bg);
   backdrop-filter: var(--blur);
   -webkit-backdrop-filter: var(--blur);
   border: 1px solid var(--glass-border);
-  border-radius: 20px;
-  box-shadow: var(--glass-shadow);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
-.glass-hover:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-}
-
-/* ========== الهيدر ========== */
 .header {
-  padding: 20px 15px;
-  margin-bottom: 20px;
   text-align: center;
-  position: relative;
-  overflow: hidden;
+  padding: 20px;
+  margin-bottom: 15px;
 }
 
-.header::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, transparent 70%);
-  z-index: -1;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 15px;
-  margin-bottom: 10px;
-}
-
-.logo-icon {
-  width: 50px;
-  height: 50px;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  border-radius: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
-}
-
-.logo-text {
-  font-size: 2.5rem;
-  font-weight: 800;
-  background: linear-gradient(135deg, #fff 0%, #c7d2fe 100%);
+.header h1 {
+  font-size: 2.2rem;
+  background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  margin-bottom: 8px;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
-.tagline {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.95rem;
-  max-width: 600px;
-  margin: 0 auto;
-  line-height: 1.5;
+.subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
 }
 
-/* ========== البحث ========== */
 .search-section {
-  padding: 20px;
-  margin-bottom: 20px;
-  position: relative;
-}
-
-.search-container {
-  position: relative;
-}
-
-.search-icon {
-  position: absolute;
-  right: 18px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 18px;
+  margin-bottom: 15px;
+  padding: 15px;
 }
 
 .search-box {
   width: 100%;
-  padding: 16px 50px 16px 20px;
-  background: rgba(15, 23, 42, 0.6);
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  border-radius: 14px;
+  padding: 14px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
   font-family: 'Cairo', sans-serif;
-  font-size: 16px;
+  font-size: 15px;
   color: white;
   outline: none;
-  transition: var(--transition);
-}
-
-.search-box:focus {
-  background: rgba(15, 23, 42, 0.8);
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+  transition: all 0.3s ease;
 }
 
 .search-box::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.6);
 }
 
-/* ========== الأزرار ========== */
+.search-box:focus {
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid var(--primary);
+  box-shadow: 0 0 15px rgba(37, 99, 235, 0.3);
+}
+
 .filter-buttons {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  padding: 0 20px 20px;
+  margin-bottom: 15px;
   justify-content: center;
 }
 
 .filter-btn {
-  padding: 10px 22px;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   color: rgba(255, 255, 255, 0.9);
+  padding: 10px 20px;
+  border-radius: 12px;
+  cursor: pointer;
   font-family: 'Cairo', sans-serif;
   font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: var(--transition);
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
 .filter-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .filter-btn.active {
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  background: var(--primary);
   border-color: transparent;
-  color: white;
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
-/* ========== القنوات ========== */
 .channels-section {
-  padding: 0 20px 20px;
-}
-
-.channels-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.channels-title {
-  font-size: 1.4rem;
-  font-weight: 700;
-}
-
-.channels-count {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 5px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
+  padding: 15px;
 }
 
 .channels-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+  gap: 15px;
 }
 
-@media (max-width: 768px) {
-  .channels-grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  }
-}
-
-@media (max-width: 480px) {
-  .channels-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ========== بطاقة القناة ========== */
 .channel-card {
-  padding: 20px;
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 18px;
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.3s ease;
   position: relative;
-  overflow: hidden;
+  min-height: 140px;
   display: flex;
   flex-direction: column;
-  height: 100%;
-}
-
-.channel-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(124, 58, 237, 0.05) 100%);
-  z-index: -1;
+  align-items: center;
+  justify-content: center;
 }
 
 .channel-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
 
 .channel-card.focused {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 2px var(--primary), 0 10px 30px rgba(37, 99, 235, 0.3);
-}
-
-.channel-header {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 15px;
+  background: rgba(37, 99, 235, 0.15);
+  border: 2px solid var(--primary);
+  transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(37, 99, 235, 0.4);
 }
 
 .channel-logo {
-  width: 60px;
-  height: 60px;
+  width: 55px;
+  height: 55px;
   object-fit: contain;
-  border-radius: 12px;
+  border-radius: 10px;
+  margin-bottom: 10px;
   background: rgba(255, 255, 255, 0.1);
   padding: 8px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.channel-info {
-  flex: 1;
 }
 
 .channel-name {
   font-weight: 700;
-  font-size: 1.1rem;
-  margin-bottom: 5px;
   color: white;
+  font-size: 0.95rem;
+  text-align: center;
+  margin-bottom: 5px;
 }
 
-.channel-group {
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.7);
-  display: flex;
-  align-items: center;
-  gap: 5px;
+.channel-info {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
 }
 
-/* ========== اختيار الجودة ========== */
+.quality-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: var(--primary);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.live-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: var(--accent);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+/* أزرار الجودة داخل البطاقة */
 .quality-selector {
   margin-top: 15px;
-  padding-top: 15px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.quality-title {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 10px;
+  width: 100%;
   display: flex;
-  align-items: center;
   gap: 8px;
-}
-
-.quality-buttons {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  justify-content: center;
 }
 
 .quality-btn {
-  padding: 12px 5px;
+  flex: 1;
+  padding: 8px 5px;
   background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
+  border-radius: 8px;
   color: rgba(255, 255, 255, 0.9);
   font-family: 'Cairo', sans-serif;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.3s ease;
   text-align: center;
-  position: relative;
-  overflow: hidden;
 }
 
 .quality-btn:hover {
@@ -381,7 +268,7 @@ body::before {
 }
 
 .quality-btn.SD.active {
-  background: var(--success);
+  background: #10b981;
 }
 
 .quality-btn.HD.active {
@@ -392,343 +279,195 @@ body::before {
   background: var(--secondary);
 }
 
-.quality-btn .play-icon {
-  margin-left: 5px;
-  font-size: 0.9rem;
-  transition: var(--transition);
-}
-
-.quality-btn:hover .play-icon {
-  transform: scale(1.2);
-}
-
-/* ========== البادجات ========== */
-.badges {
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.badge {
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 0.7rem;
+.group-header {
+  grid-column: 1 / -1;
+  font-size: 1.3rem;
   font-weight: 700;
-  display: inline-block;
-}
-
-.badge.quality {
-  background: var(--primary);
+  margin: 25px 0 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   color: white;
 }
 
-.badge.live {
-  background: var(--accent);
+.loading {
+  text-align: center;
+  padding: 40px 20px;
   color: white;
+  grid-column: 1 / -1;
 }
 
-/* ========== التحكم عن بعد ========== */
+.spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid white;
+  border-radius: 50%;
+  margin: 0 auto 15px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.no-results {
+  text-align: center;
+  padding: 30px;
+  color: rgba(255, 255, 255, 0.6);
+  grid-column: 1 / -1;
+}
+
 .remote-controls {
   position: fixed;
-  bottom: 30px;
-  right: 50%;
-  transform: translateX(50%);
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   display: none;
-  gap: 15px;
-  background: rgba(15, 23, 42, 0.9);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  padding: 20px;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 15px;
   border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
   z-index: 1000;
 }
 
-.remote-controls.show {
-  display: flex;
-}
-
 .remote-btn {
-  width: 60px;
-  height: 60px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 15px;
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 12px;
   color: white;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: var(--transition);
-}
-
-.remote-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
-  transform: translateY(-2px);
+  transition: all 0.2s ease;
 }
 
 .remote-btn:active {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.3);
   transform: scale(0.95);
 }
 
-.remote-center {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+@media (max-width: 768px) {
+  .channels-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
 }
 
-/* ========== الفوتر ========== */
-.footer {
-  padding: 25px 20px;
-  text-align: center;
-  margin-top: 30px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+@media (max-width: 480px) {
+  .channels-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .quality-selector {
+    flex-direction: column;
+  }
 }
 
-.copyright {
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.9rem;
-  margin-bottom: 10px;
-}
-
-.version {
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 0.8rem;
-}
-
-/* ========== تحميل الشعارات ========== */
-.logo-fallback {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 60px;
-  height: 60px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  color: white;
-  font-weight: bold;
-  font-size: 1.2rem;
-}
-
-/* ========== تصميم لأجهزة التلفاز ========== */
 @media (min-width: 1024px) {
   .remote-controls {
     display: flex;
   }
-  
-  body {
-    padding: 20px;
-  }
-  
-  .container {
-    max-width: 1400px;
-    margin: 0 auto;
-  }
 }
 
-/* ========== تحسينات للشاشات الكبيرة ========== */
-@media (min-width: 1400px) {
-  .channels-grid {
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  }
-}
-
-/* ========== تحسينات للهواتف ========== */
-@media (max-width: 480px) {
-  .header {
-    padding: 15px 10px;
-  }
-  
-  .logo-text {
-    font-size: 2rem;
-  }
-  
-  .search-section, .channels-section {
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-  
-  .filter-buttons {
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-  
-  .remote-controls {
-    padding: 15px;
-    bottom: 20px;
-  }
-  
-  .remote-btn {
-    width: 50px;
-    height: 50px;
-    font-size: 1.3rem;
-  }
-}
-
-/* ========== رسالة تنبيه ========== */
-.channel-notification {
+/* رسالة تنبيه سريعة */
+.quick-notice {
   position: fixed;
-  bottom: 120px;
-  right: 50%;
-  transform: translateX(50%);
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
   background: rgba(15, 23, 42, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  padding: 15px 25px;
+  padding: 12px 24px;
   color: white;
   font-weight: 600;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
   z-index: 1001;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s, visibility 0.3s;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  text-align: center;
   max-width: 90%;
 }
 
-.channel-notification.show {
+.quick-notice.show {
   opacity: 1;
   visibility: visible;
-}
-
-.channel-notification.success {
-  border-right: 4px solid var(--success);
-}
-
-.channel-notification.error {
-  border-right: 4px solid var(--danger);
-}
-
-.channel-notification.info {
-  border-right: 4px solid var(--primary);
 }
 </style>
 </head>
 
 <body>
-<div class="container">
-  <!-- الهيدر -->
-  <header class="header glass">
-    <div class="logo">
-      <div class="logo-icon">
-        <i class="fas fa-tv"></i>
-      </div>
-      <h1 class="logo-text">Leo TV</h1>
-    </div>
-    <p class="tagline">منصة البث المباشر الأكثر تطوراً - شاهد قنواتك المفضلة بجودة عالية مع خيارات متعددة</p>
-  </header>
 
-  <!-- البحث -->
-  <section class="search-section glass">
-    <div class="search-container">
-      <i class="fas fa-search search-icon"></i>
-      <input type="text" id="search-input" class="search-box" placeholder="ابحث عن قناة أو مجموعة...">
-    </div>
-  </section>
+<header class="header glass-panel">
+  <h1>Leo TV</h1>
+  <div class="subtitle">منصة IPTV متطورة - شاهد قنواتك المفضلة</div>
+</header>
 
-  <!-- أزرار التصفية -->
-  <div class="filter-buttons" id="filter-buttons">
-    <button class="filter-btn active" data-filter="all">
-      <i class="fas fa-list"></i> الكل
-    </button>
-    <button class="filter-btn" data-filter="رياضي">
-      <i class="fas fa-futbol"></i> رياضية
-    </button>
-    <button class="filter-btn" data-filter="ترفيهي">
-      <i class="fas fa-film"></i> ترفيهية
-    </button>
-    <button class="filter-btn" data-filter="أخبار">
-      <i class="fas fa-newspaper"></i> أخبار
-    </button>
-    <button class="filter-btn" data-filter="أطفال">
-      <i class="fas fa-child"></i> أطفال
-    </button>
+<section class="search-section glass-panel">
+  <input type="text" id="search-input" class="search-box" placeholder="ابحث عن قناة...">
+</section>
+
+<div class="filter-buttons" id="filter-buttons">
+  <button class="filter-btn active" data-filter="all">
+    <i class="fas fa-list"></i> الكل
+  </button>
+  <button class="filter-btn" data-filter="رياضي">
+    <i class="fas fa-futbol"></i> رياضية
+  </button>
+  <button class="filter-btn" data-filter="ترفيهي">
+    <i class="fas fa-film"></i> ترفيهية
+  </button>
+  <button class="filter-btn" data-filter="أخبار">
+    <i class="fas fa-newspaper"></i> أخبار
+  </button>
+</div>
+
+<section class="channels-section glass-panel">
+  <div class="channels-grid" id="channels">
+    <!-- القنوات يتم إضافتها هنا -->
   </div>
+  
+  <div id="loading" class="loading" style="display: none;">
+    <div class="spinner"></div>
+    جاري تحميل القنوات...
+  </div>
+  
+  <div id="no-results" class="no-results" style="display: none;">
+    <i class="fas fa-tv"></i>
+    <p>لم يتم العثور على قنوات تطابق بحثك</p>
+  </div>
+</section>
 
-  <!-- القنوات -->
-  <section class="channels-section">
-    <div class="channels-header">
-      <h2 class="channels-title">القنوات المتاحة</h2>
-      <div class="channels-count" id="channels-count">0 قناة</div>
-    </div>
-    
-    <div class="channels-grid" id="channels">
-      <!-- القنوات سيتم إضافتها عبر الجافاسكريبت -->
-    </div>
-    
-    <div id="no-results" class="no-results" style="display: none;">
-      <i class="fas fa-tv"></i>
-      <p>لم يتم العثور على قنوات تطابق بحثك</p>
-    </div>
-  </section>
-
-  <!-- الفوتر -->
-  <footer class="footer">
-    <p class="copyright">© 2023 Leo TV - جميع الحقوق محفوظة</p>
-    <p class="version">الإصدار 2.0 | تم التطوير خصيصاً لتجربة مشاهدة استثنائية</p>
-  </footer>
+<div class="remote-controls">
+  <button class="remote-btn" onclick="navigateRemote('up')">⬆️</button>
+  <div style="display: flex; flex-direction: column; gap: 5px;">
+    <button class="remote-btn" onclick="navigateRemote('left')">⬅️</button>
+    <button class="remote-btn" onclick="activateCurrent()">⏺️</button>
+    <button class="remote-btn" onclick="navigateRemote('right')">➡️</button>
+  </div>
+  <button class="remote-btn" onclick="navigateRemote('down')">⬇️</button>
 </div>
 
 <!-- رسالة تنبيه -->
-<div class="channel-notification" id="channel-notification">
-  <i class="fas fa-info-circle"></i>
-  <span id="notification-text">جاري فتح القناة...</span>
-</div>
-
-<!-- التحكم عن بعد -->
-<div class="remote-controls" id="remote-controls">
-  <button class="remote-btn" onclick="navigateRemote('up')">
-    <i class="fas fa-chevron-up"></i>
-  </button>
-  
-  <div class="remote-center">
-    <button class="remote-btn" onclick="navigateRemote('left')">
-      <i class="fas fa-chevron-left"></i>
-    </button>
-    <button class="remote-btn" onclick="activateCurrent()">
-      <i class="fas fa-play"></i>
-    </button>
-    <button class="remote-btn" onclick="navigateRemote('right')">
-      <i class="fas fa-chevron-right"></i>
-    </button>
-  </div>
-  
-  <button class="remote-btn" onclick="navigateRemote('down')">
-    <i class="fas fa-chevron-down"></i>
-  </button>
+<div class="quick-notice" id="quick-notice">
+  <span id="notice-text">جاري فتح القناة...</span>
 </div>
 
 <script>
-// مكتبة شعارات القنوات
-const channelLogos = {
-  "beIN SPORT 1": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Bein_Sports_1_logo.svg/1200px-Bein_Sports_1_logo.svg.png",
-  "beIN SPORT 2": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Bein_Sports_1_logo.svg/1200px-Bein_Sports_1_logo.svg.png",
-  "beIN SPORT 3": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Bein_Sports_1_logo.svg/1200px-Bein_Sports_1_logo.svg.png",
-  "قناة العربية": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Al_Arabiya_Logo_2016.svg/1200px-Al_Arabiya_Logo_2016.svg.png",
-  "MBC 1": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/MBC_1_logo_%282021%29.png/800px-MBC_1_logo_%282021%29.png",
-  "روتانا خليجية": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Rotana_Khalijia_Logo.png/800px-Rotana_Khalijia_Logo.png",
-  "الكأس": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Alkass_logo.png/800px-Alkass_logo.png",
-  "CNN العربية": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/CNN_Arabic_2017_logo.svg/1200px-CNN_Arabic_2017_logo.svg.png",
-  "سكاي نيوز عربية": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Sky_News_Arabia_Logo.svg/1200px-Sky_News_Arabia_Logo.svg.png",
-  "قناة ناشيونال جيوغرافيك أبوظبي": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/National_Geographic_Abu_Dhabi_logo.svg/1200px-National_Geographic_Abu_Dhabi_logo.svg.png",
-  "قناة طيور الجنة": "https://i.imgur.com/v2ZQ8QK.png"
-};
-
-// بيانات القنوات مع رواقع حقيقية
+// بيانات القنوات مع رواقع m3u8
 const channelsData = [
   {
     name: "beIN SPORT 1",
-    logo: channelLogos["beIN SPORT 1"],
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Bein_Sports_1_logo.svg/1200px-Bein_Sports_1_logo.svg.png",
     group: "beIN Sports",
     category: "رياضي",
     qualities: {
@@ -741,7 +480,7 @@ const channelsData = [
   },
   {
     name: "beIN SPORT 2",
-    logo: channelLogos["beIN SPORT 2"],
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Bein_Sports_1_logo.svg/1200px-Bein_Sports_1_logo.svg.png",
     group: "beIN Sports",
     category: "رياضي",
     qualities: {
@@ -754,7 +493,7 @@ const channelsData = [
   },
   {
     name: "beIN SPORT 3",
-    logo: channelLogos["beIN SPORT 3"],
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Bein_Sports_1_logo.svg/1200px-Bein_Sports_1_logo.svg.png",
     group: "beIN Sports",
     category: "رياضي",
     qualities: {
@@ -767,7 +506,7 @@ const channelsData = [
   },
   {
     name: "قناة العربية",
-    logo: channelLogos["قناة العربية"],
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Al_Arabiya_Logo_2016.svg/1200px-Al_Arabiya_Logo_2016.svg.png",
     group: "أخبار",
     category: "أخبار",
     qualities: {
@@ -780,7 +519,7 @@ const channelsData = [
   },
   {
     name: "MBC 1",
-    logo: channelLogos["MBC 1"],
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/MBC_1_logo_%282021%29.png/800px-MBC_1_logo_%282021%29.png",
     group: "ترفيه",
     category: "ترفيهي",
     qualities: {
@@ -793,7 +532,7 @@ const channelsData = [
   },
   {
     name: "روتانا خليجية",
-    logo: channelLogos["روتانا خليجية"],
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Rotana_Khalijia_Logo.png/800px-Rotana_Khalijia_Logo.png",
     group: "ترفيه",
     category: "ترفيهي",
     qualities: {
@@ -806,7 +545,7 @@ const channelsData = [
   },
   {
     name: "الكأس",
-    logo: channelLogos["الكأس"],
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Alkass_logo.png/800px-Alkass_logo.png",
     group: "رياضة",
     category: "رياضي",
     qualities: {
@@ -819,52 +558,13 @@ const channelsData = [
   },
   {
     name: "CNN العربية",
-    logo: channelLogos["CNN العربية"],
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/CNN_Arabic_2017_logo.svg/1200px-CNN_Arabic_2017_logo.svg.png",
     group: "أخبار",
     category: "أخبار",
     qualities: {
       "SD": "https://cnn-cnninternational-1-gb.samsung.wurl.com/manifest/playlist.m3u8",
       "HD": "https://cnn-cnninternational-1-gb.samsung.wurl.com/manifest/playlist_2.m3u8",
       "FHD": "https://cnn-cnninternational-1-gb.samsung.wurl.com/manifest/playlist_4.m3u8"
-    },
-    server: "Leo Servers",
-    status: "مباشر"
-  },
-  {
-    name: "سكاي نيوز عربية",
-    logo: channelLogos["سكاي نيوز عربية"],
-    group: "أخبار",
-    category: "أخبار",
-    qualities: {
-      "SD": "https://skynews-skynewsarabia-1-gb.samsung.wurl.com/manifest/playlist.m3u8",
-      "HD": "https://skynews-skynewsarabia-1-gb.samsung.wurl.com/manifest/playlist_2.m3u8",
-      "FHD": "https://skynews-skynewsarabia-1-gb.samsung.wurl.com/manifest/playlist_4.m3u8"
-    },
-    server: "Leo Servers",
-    status: "مباشر"
-  },
-  {
-    name: "قناة ناشيونال جيوغرافيك أبوظبي",
-    logo: channelLogos["قناة ناشيونال جيوغرافيك أبوظبي"],
-    group: "وثائقيات",
-    category: "ترفيهي",
-    qualities: {
-      "SD": "https://ng-abudhabi.ng-abudhabi.net/ng-abudhabi/ng-abudhabi_1.m3u8",
-      "HD": "https://ng-abudhabi.ng-abudhabi.net/ng-abudhabi/ng-abudhabi_2.m3u8",
-      "FHD": "https://ng-abudhabi.ng-abudhabi.net/ng-abudhabi/ng-abudhabi_4.m3u8"
-    },
-    server: "Leo Servers",
-    status: "مباشر"
-  },
-  {
-    name: "قناة طيور الجنة",
-    logo: channelLogos["قناة طيور الجنة"],
-    group: "أطفال",
-    category: "أطفال",
-    qualities: {
-      "SD": "https://toyoraljanahtv.akamaized.net/hls/live/2024648/ToyorAlJanahTV/index.m3u8",
-      "HD": "https://toyoraljanahtv.akamaized.net/hls/live/2024648/ToyorAlJanahTV/index_2.m3u8",
-      "FHD": "https://toyoraljanahtv.akamaized.net/hls/live/2024648/ToyorAlJanahTV/index_4.m3u8"
     },
     server: "Leo Servers",
     status: "مباشر"
@@ -878,35 +578,10 @@ let currentFilter = "all";
 let currentFocusIndex = 0;
 let channelCards = [];
 let filterButtons = [];
-let searchInput;
-let channelsContainer;
-let channelsCount;
-let noResultsElement;
-let remoteControls;
-let selectedQualities = {};
-let notification;
+let selectedQualities = {}; // لتخزين الجودة المختارة لكل قناة
 
 // تهيئة التطبيق
 function initApp() {
-  searchInput = document.getElementById('search-input');
-  channelsContainer = document.getElementById('channels');
-  channelsCount = document.getElementById('channels-count');
-  noResultsElement = document.getElementById('no-results');
-  remoteControls = document.getElementById('remote-controls');
-  notification = document.getElementById('channel-notification');
-  
-  loadChannels();
-  setupEventListeners();
-  updateChannelsCount();
-  
-  // إظهار التحكم عن بعد على الشاشات الكبيرة
-  if (window.innerWidth >= 1024) {
-    remoteControls.classList.add('show');
-  }
-}
-
-// تحميل القنوات
-function loadChannels() {
   allChannels = channelsData;
   filteredChannels = [...allChannels];
   
@@ -915,20 +590,22 @@ function loadChannels() {
     selectedQualities[channel.name] = "HD";
   });
   
-  displayChannels(filteredChannels);
+  displayChannels(allChannels);
+  setupEventListeners();
   setupRemoteNavigation();
 }
 
 // عرض القنوات
 function displayChannels(channels) {
-  channelsContainer.innerHTML = "";
+  const grid = document.getElementById("channels");
   
   if (channels.length === 0) {
-    noResultsElement.style.display = "block";
+    document.getElementById("no-results").style.display = "block";
+    grid.innerHTML = "";
     return;
   }
   
-  noResultsElement.style.display = "none";
+  document.getElementById("no-results").style.display = "none";
   
   const groupedChannels = {};
   channels.forEach(ch => {
@@ -938,330 +615,154 @@ function displayChannels(channels) {
     groupedChannels[ch.group].push(ch);
   });
   
+  let html = "";
+  
   for (const group in groupedChannels) {
-    const groupChannels = groupedChannels[group];
+    html += `<div class="group-header">${group}</div>`;
     
-    groupChannels.forEach(ch => {
-      const card = document.createElement("div");
-      card.className = "channel-card glass glass-hover";
-      card.tabIndex = 0;
-      card.dataset.channelName = ch.name;
-      
-      // الجودة المختارة لهذه القناة
+    groupedChannels[group].forEach(ch => {
       const selectedQuality = selectedQualities[ch.name] || "HD";
       
-      card.innerHTML = `
-        <div class="badges">
-          <span class="badge quality">${selectedQuality}</span>
-          <span class="badge live">LIVE</span>
-        </div>
-        
-        <div class="channel-header">
-          ${ch.logo && ch.logo.startsWith('http') ? 
-            `<img src="${ch.logo}" alt="${ch.name}" class="channel-logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/60x60/1e293b/ffffff?text=${ch.name.substring(0,2)}';">` :
-            `<div class="logo-fallback">${ch.name.substring(0,2)}</div>`
-          }
-          <div class="channel-info">
-            <div class="channel-name">${ch.name}</div>
-            <div class="channel-group">
-              <i class="fas fa-layer-group"></i> ${ch.group}
-              <span style="margin: 0 5px">•</span>
-              <i class="fas fa-server"></i> ${ch.server}
-            </div>
-          </div>
-        </div>
-        
-        <div class="quality-selector">
-          <div class="quality-title">
-            <i class="fas fa-tachometer-alt"></i> اختر جودة البث:
-          </div>
-          <div class="quality-buttons">
-            <button class="quality-btn SD ${selectedQuality === 'SD' ? 'active' : ''}" data-quality="SD" onclick="playChannelQuality('${ch.name}', 'SD')">
-              <i class="fas fa-play-circle play-icon"></i> SD
+      html += `
+        <div class="channel-card" tabindex="0" data-channel="${ch.name}">
+          <img src="${ch.logo}" alt="${ch.name}" class="channel-logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/55x55/1e293b/ffffff?text=${ch.name.substring(0,2)}';">
+          <div class="quality-badge">${selectedQuality}</div>
+          <div class="live-badge">LIVE</div>
+          <div class="channel-name">${ch.name}</div>
+          <div class="channel-info">${ch.server}</div>
+          
+          <div class="quality-selector">
+            <button class="quality-btn SD ${selectedQuality === 'SD' ? 'active' : ''}" 
+                    onclick="event.stopPropagation(); selectQuality('${ch.name}', 'SD')">
+              SD
             </button>
-            <button class="quality-btn HD ${selectedQuality === 'HD' ? 'active' : ''}" data-quality="HD" onclick="playChannelQuality('${ch.name}', 'HD')">
-              <i class="fas fa-play-circle play-icon"></i> HD
+            <button class="quality-btn HD ${selectedQuality === 'HD' ? 'active' : ''}" 
+                    onclick="event.stopPropagation(); selectQuality('${ch.name}', 'HD')">
+              HD
             </button>
-            <button class="quality-btn FHD ${selectedQuality === 'FHD' ? 'active' : ''}" data-quality="FHD" onclick="playChannelQuality('${ch.name}', 'FHD')">
-              <i class="fas fa-play-circle play-icon"></i> FHD
+            <button class="quality-btn FHD ${selectedQuality === 'FHD' ? 'active' : ''}" 
+                    onclick="event.stopPropagation(); selectQuality('${ch.name}', 'FHD')">
+              FHD
             </button>
           </div>
         </div>
       `;
-      
-      // إضافة حدث الضغط على القناة (للتشغيل بالجودة المختارة)
-      card.addEventListener('click', (e) => {
-        if (!e.target.classList.contains('quality-btn')) {
-          const channelName = card.dataset.channelName;
-          const quality = selectedQualities[channelName] || "HD";
-          playChannelQuality(channelName, quality);
-        }
-      });
-      
-      channelsContainer.appendChild(card);
     });
   }
   
+  grid.innerHTML = html;
+  
+  // إضافة أحداث النقر للبطاقات (للتشغيل بالجودة المختارة)
+  document.querySelectorAll('.channel-card').forEach(card => {
+    card.addEventListener('click', function(e) {
+      // فقط إذا لم يكن النقر على زر الجودة
+      if (!e.target.classList.contains('quality-btn') && !e.target.closest('.quality-btn')) {
+        const channelName = this.dataset.channel;
+        const quality = selectedQualities[channelName] || "HD";
+        playChannel(channelName, quality);
+      }
+    });
+  });
+  
   setupRemoteNavigation();
-  updateChannelsCount();
 }
 
-// تشغيل القناة بالجودة المحددة
-function playChannelQuality(channelName, quality) {
+// اختيار جودة معينة
+function selectQuality(channelName, quality) {
+  selectedQualities[channelName] = quality;
+  
+  // تحديث البطاقة
+  const card = document.querySelector(`[data-channel="${channelName}"]`);
+  if (card) {
+    // تحديث البادج
+    const badge = card.querySelector('.quality-badge');
+    if (badge) badge.textContent = quality;
+    
+    // تحديث أزرار الجودة
+    const buttons = card.querySelectorAll('.quality-btn');
+    buttons.forEach(btn => {
+      btn.classList.remove('active');
+      if (btn.textContent.trim() === quality) {
+        btn.classList.add('active');
+      }
+    });
+  }
+  
+  showNotice(`تم اختيار جودة ${quality} لـ ${channelName}`);
+}
+
+// تشغيل القناة (الطريقة الأصلية - الانتقال المباشر للرابط)
+function playChannel(channelName, quality) {
   const channel = allChannels.find(ch => ch.name === channelName);
   
   if (!channel) {
-    showNotification(`القناة غير موجودة: ${channelName}`, 'error');
+    showNotice(`القناة غير موجودة: ${channelName}`);
     return;
   }
   
   const url = channel.qualities[quality];
   
   if (url && url.startsWith('http')) {
-    // تحديث الجودة المختارة
-    selectedQualities[channelName] = quality;
+    showNotice(`جاري فتح ${channelName} بجودة ${quality}...`);
     
-    // تحديث البطاقة إذا كانت مرئية
-    const card = document.querySelector(`[data-channel-name="${channelName}"]`);
-    if (card) {
-      const qualityBadge = card.querySelector('.badge.quality');
-      const qualityButtons = card.querySelectorAll('.quality-btn');
-      
-      if (qualityBadge) qualityBadge.textContent = quality;
-      
-      qualityButtons.forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.dataset.quality === quality) {
-          btn.classList.add('active');
-        }
-      });
-    }
+    // الانتقال المباشر إلى رابط m3u8 - يعتمد على المتصفح
+    window.location.href = url;
     
-    // عرض رسالة
-    showNotification(`جاري فتح ${channelName} بجودة ${quality}...`, 'info');
+    // أو فتح في نافذة/تبويب جديد
+    // window.open(url, '_blank');
     
-    // فتح الرابط في نافذة جديدة بعد تأخير قصير
-    setTimeout(() => {
-      try {
-        // محاولة فتح الرابط في نافذة جديدة
-        const newWindow = window.open('', '_blank');
-        
-        if (newWindow) {
-          // إنشاء صفحة بسيطة للبث
-          newWindow.document.write(`
-            <!DOCTYPE html>
-            <html dir="rtl">
-            <head>
-              <title>${channelName} - ${quality} - Leo TV</title>
-              <meta charset="UTF-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <style>
-                body {
-                  margin: 0;
-                  padding: 0;
-                  background: #000;
-                  font-family: 'Cairo', sans-serif;
-                  color: white;
-                  overflow: hidden;
-                }
-                .player-container {
-                  width: 100vw;
-                  height: 100vh;
-                  display: flex;
-                  flex-direction: column;
-                }
-                .player-header {
-                  background: rgba(0, 0, 0, 0.8);
-                  padding: 15px;
-                  display: flex;
-                  justify-content: space-between;
-                  align-items: center;
-                  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                }
-                .channel-info {
-                  display: flex;
-                  align-items: center;
-                  gap: 15px;
-                }
-                .channel-name {
-                  font-size: 1.2rem;
-                  font-weight: bold;
-                }
-                .quality-badge {
-                  background: #2563eb;
-                  padding: 5px 10px;
-                  border-radius: 20px;
-                  font-size: 0.8rem;
-                }
-                .close-btn {
-                  background: rgba(255, 255, 255, 0.1);
-                  border: none;
-                  color: white;
-                  padding: 10px 20px;
-                  border-radius: 10px;
-                  cursor: pointer;
-                  font-family: inherit;
-                }
-                .close-btn:hover {
-                  background: rgba(255, 255, 255, 0.2);
-                }
-                .video-container {
-                  flex: 1;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  background: #000;
-                }
-                .loading {
-                  text-align: center;
-                }
-                .loading-spinner {
-                  width: 50px;
-                  height: 50px;
-                  border: 4px solid rgba(255, 255, 255, 0.1);
-                  border-top: 4px solid #2563eb;
-                  border-radius: 50%;
-                  animation: spin 1s linear infinite;
-                  margin: 0 auto 20px;
-                }
-                @keyframes spin {
-                  to { transform: rotate(360deg); }
-                }
-                .m3u8-link {
-                  margin-top: 20px;
-                  padding: 15px;
-                  background: rgba(255, 255, 255, 0.05);
-                  border-radius: 10px;
-                  word-break: break-all;
-                  font-size: 0.9rem;
-                  direction: ltr;
-                }
-              </style>
-            </head>
-            <body>
-              <div class="player-container">
-                <div class="player-header">
-                  <div class="channel-info">
-                    <div class="channel-name">${channelName}</div>
-                    <div class="quality-badge">${quality}</div>
-                  </div>
-                  <button class="close-btn" onclick="window.close()">إغلاق</button>
-                </div>
-                <div class="video-container">
-                  <div class="loading">
-                    <div class="loading-spinner"></div>
-                    <p>جاري تحميل البث المباشر...</p>
-                    <div class="m3u8-link">رابط البث: ${url}</div>
-                    <p style="margin-top: 20px; color: #999; font-size: 0.9rem;">
-                      ملاحظة: إذا لم يبدأ التشغيل تلقائياً، قد تحتاج إلى تطبيق خارجي لدعم تنسيق m3u8
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <script>
-                // محاولة تشغيل الفيديو إذا كان المتصفح يدعمه
-                setTimeout(() => {
-                  try {
-                    // إنشاء عنصر فيديو
-                    const video = document.createElement('video');
-                    video.controls = true;
-                    video.autoplay = true;
-                    video.style.width = '100%';
-                    video.style.height = '100%';
-                    
-                    // إضافة مصدر الفيديو
-                    const source = document.createElement('source');
-                    source.src = '${url}';
-                    source.type = 'application/x-mpegURL';
-                    
-                    video.appendChild(source);
-                    
-                    // استبدال شاشة التحميل بالفيديو
-                    const videoContainer = document.querySelector('.video-container');
-                    videoContainer.innerHTML = '';
-                    videoContainer.appendChild(video);
-                    
-                    // محاولة التشغيل
-                    video.play().catch(e => {
-                      console.log('لا يمكن التشغيل التلقائي:', e);
-                      videoContainer.innerHTML = \`
-                        <div style="text-align: center; padding: 20px;">
-                          <h3>تعذر تشغيل البث تلقائياً</h3>
-                          <p>يمكنك:</p>
-                          <p>1. نسخ الرابط أدناه واستخدامه في تطبيق IPTV</p>
-                          <p>2. تثبيت إضافة HLS Player لمتصفحك</p>
-                          <div class="m3u8-link">\${'${url}'}</div>
-                          <button onclick="window.open('${url}', '_blank')" style="background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; margin-top: 20px; font-family: inherit;">
-                            فتح الرابط في نافذة جديدة
-                          </button>
-                        </div>
-                      \`;
-                    });
-                  } catch (error) {
-                    console.error('خطأ في تشغيل الفيديو:', error);
-                  }
-                }, 1000);
-              <\/script>
-            </body>
-            </html>
-          `);
-          
-          newWindow.focus();
-          showNotification(`تم فتح ${channelName} في نافذة جديدة`, 'success');
-        } else {
-          // إذا تم منع النوافذ المنبثقة، عرض الرابط
-          showNotification(`تم منع النافذة المنبثقة. يمكنك نسخ الرابط: ${url}`, 'error');
-          
-          // عرض الرابط للمستخدم
-          const linkText = `رابط ${channelName} (${quality}): ${url}`;
-          if (navigator.clipboard) {
-            navigator.clipboard.writeText(url).then(() => {
-              showNotification('تم نسخ الرابط إلى الحافظة', 'success');
-            });
-          }
-          
-          // عرض الرابط في تنبيه
-          setTimeout(() => {
-            if (confirm(`تم منع النافذة المنبثقة.\n\nرابط البث:\n${url}\n\nهل تريد نسخ الرابط؟`)) {
-              if (navigator.clipboard) {
-                navigator.clipboard.writeText(url);
-                showNotification('تم نسخ الرابط إلى الحافظة', 'success');
-              }
-            }
-          }, 500);
-        }
-      } catch (error) {
-        console.error('خطأ في فتح الرابط:', error);
-        showNotification(`خطأ في فتح الرابط: ${error.message}`, 'error');
-      }
-    }, 1000);
   } else {
-    showNotification(`رابط البث غير متاح لـ ${channelName}`, 'error');
+    showNotice(`رابط البث غير متاح لـ ${channelName}`);
   }
 }
 
-// عرض رسالة تنبيه
-function showNotification(message, type = 'info') {
-  const notification = document.getElementById('channel-notification');
-  const textElement = document.getElementById('notification-text');
+// عرض رسالة سريعة
+function showNotice(message) {
+  const notice = document.getElementById('quick-notice');
+  const text = document.getElementById('notice-text');
   
-  // تحديث النص واللون
-  textElement.textContent = message;
-  notification.className = `channel-notification ${type}`;
+  text.textContent = message;
+  notice.classList.add('show');
   
-  // إظهار الرسالة
-  notification.classList.add('show');
-  
-  // إخفاء الرسالة بعد 3 ثواني
   setTimeout(() => {
-    notification.classList.remove('show');
-  }, 3000);
+    notice.classList.remove('show');
+  }, 2000);
 }
 
-// تحديث عداد القنوات
-function updateChannelsCount() {
-  const count = channelsContainer.querySelectorAll('.channel-card').length;
-  channelsCount.textContent = `${count} قناة`;
+// تصفية القنوات
+function filterChannels(category) {
+  currentFilter = category;
+  
+  filterButtons.forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.dataset.filter === category) {
+      btn.classList.add('active');
+    }
+  });
+  
+  if (category === "all") {
+    filteredChannels = [...allChannels];
+  } else {
+    filteredChannels = allChannels.filter(ch => ch.category === category);
+  }
+  
+  // تطبيق البحث أيضًا
+  applySearch();
+}
+
+// تطبيق البحث
+function applySearch() {
+  const searchTerm = document.getElementById('search-input').value.trim().toLowerCase();
+  
+  if (searchTerm === '') {
+    displayChannels(filteredChannels);
+  } else {
+    const searchResults = filteredChannels.filter(channel => 
+      channel.name.toLowerCase().includes(searchTerm) || 
+      channel.group.toLowerCase().includes(searchTerm)
+    );
+    displayChannels(searchResults);
+  }
 }
 
 // إعداد التنقل بالأزرار
@@ -1287,9 +788,7 @@ function navigateRemote(direction) {
   
   const oldIndex = currentFocusIndex;
   let newIndex = currentFocusIndex;
-  
-  // عدد الأعمدة حسب حجم الشاشة
-  const columns = window.innerWidth >= 1400 ? 3 : window.innerWidth >= 768 ? 2 : 1;
+  const columns = window.innerWidth >= 768 ? 2 : 1;
   
   switch(direction) {
     case 'up':
@@ -1320,58 +819,19 @@ function navigateRemote(direction) {
   }
 }
 
-// تفعيل البطاقة الحالية
+// تفعيل البطاقة الحالية (تشغيل القناة)
 function activateCurrent() {
   if (channelCards.length > 0) {
-    const channelName = channelCards[currentFocusIndex].dataset.channelName;
+    const channelName = channelCards[currentFocusIndex].dataset.channel;
     const quality = selectedQualities[channelName] || "HD";
-    playChannelQuality(channelName, quality);
+    playChannel(channelName, quality);
   }
-}
-
-// تصفية القنوات
-function filterChannels(category) {
-  currentFilter = category;
-  
-  // تحديث حالة الأزرار
-  filterButtons.forEach(btn => {
-    btn.classList.remove('active');
-    if (btn.dataset.filter === category) {
-      btn.classList.add('active');
-    }
-  });
-  
-  // تصفية القنوات
-  if (category === "all") {
-    filteredChannels = [...allChannels];
-  } else {
-    filteredChannels = allChannels.filter(ch => ch.category === category);
-  }
-  
-  // تطبيق البحث أيضًا
-  applySearch();
-}
-
-// تطبيق البحث
-function applySearch() {
-  const searchTerm = searchInput.value.trim().toLowerCase();
-  
-  if (searchTerm === '') {
-    displayChannels(filteredChannels);
-  } else {
-    const searchResults = filteredChannels.filter(channel => 
-      channel.name.toLowerCase().includes(searchTerm) || 
-      channel.group.toLowerCase().includes(searchTerm) ||
-      channel.category.toLowerCase().includes(searchTerm)
-    );
-    displayChannels(searchResults);
-  }
-  
-  updateChannelsCount();
 }
 
 // إعداد مستمعي الأحداث
 function setupEventListeners() {
+  const searchInput = document.getElementById('search-input');
+  
   // البحث
   searchInput.addEventListener('input', applySearch);
   
@@ -1380,9 +840,16 @@ function setupEventListeners() {
     channelCards.forEach(card => card.classList.remove('focused'));
   });
   
+  // أزرار التصفية
+  filterButtons = Array.from(document.querySelectorAll('.filter-btn'));
+  filterButtons.forEach(btn => {
+    btn.addEventListener('click', function() {
+      filterChannels(this.dataset.filter);
+    });
+  });
+  
   // التنقل بلوحة المفاتيح
   document.addEventListener('keydown', function(e) {
-    // تجاهل الأزرار إذا كان المستخدم يكتب في البحث
     if (document.activeElement === searchInput) return;
     
     switch(e.key) {
@@ -1414,27 +881,20 @@ function setupEventListeners() {
   
   // إظهار/إخفاء التحكم عن بعد حسب حجم الشاشة
   window.addEventListener('resize', () => {
+    const remoteControls = document.querySelector('.remote-controls');
     if (window.innerWidth >= 1024) {
-      remoteControls.classList.add('show');
+      remoteControls.style.display = 'flex';
     } else {
-      remoteControls.classList.remove('show');
+      remoteControls.style.display = 'none';
     }
     
-    // إعادة حساب التنقل
     setupRemoteNavigation();
-  });
-  
-  // إضافة أحداث لأزرار التصفية
-  filterButtons = Array.from(document.querySelectorAll('.filter-btn'));
-  filterButtons.forEach(btn => {
-    btn.addEventListener('click', function() {
-      filterChannels(this.dataset.filter);
-    });
   });
 }
 
 // بدء التطبيق عند تحميل الصفحة
 window.addEventListener('DOMContentLoaded', initApp);
 </script>
+
 </body>
 </html>
