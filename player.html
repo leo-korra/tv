@@ -5,11 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LeoTV Player</title>
 
+<!-- مكتبة Clappr الأساسية -->
 <script src="https://cdn.jsdelivr.net/clappr/latest/clappr.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
 * {
@@ -21,41 +18,69 @@
 body, html {
   width: 100%;
   height: 100%;
-  background: #0a0a14;
-  font-family: 'Cairo', sans-serif;
+  background: #000;
+  font-family: Arial, sans-serif;
   overflow: hidden;
-  color: #fff;
 }
 
-.player-container {
+#player-container {
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-#player-wrapper {
-  flex: 1;
   position: relative;
-  width: 100%;
-  height: calc(100% - 70px);
 }
 
 #player {
   width: 100%;
   height: 100%;
-  background: #000;
 }
 
-.player-header {
-  background: linear-gradient(90deg, #1a1a2e 0%, #16213e 100%);
+/* شاشة التحميل */
+#loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
   color: white;
-  padding: 15px 20px;
   display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  text-align: center;
+  padding: 20px;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #333;
+  border-top: 5px solid #f00;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* شريط التحكم العلوي */
+.player-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 15px;
+  display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  height: 70px;
+  align-items: center;
+  z-index: 100;
+  box-sizing: border-box;
 }
 
 .channel-info {
@@ -67,168 +92,104 @@ body, html {
 .channel-logo {
   width: 40px;
   height: 40px;
+  background: #333;
   border-radius: 8px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 20px;
+  color: #fff;
 }
 
-.channel-logo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.channel-details h2 {
-  font-size: 1.2rem;
-  margin-bottom: 3px;
-  font-weight: 600;
-}
-
-.channel-details p {
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.7);
+.channel-name {
+  font-size: 18px;
+  font-weight: bold;
 }
 
 .controls {
   display: flex;
   gap: 10px;
-  align-items: center;
 }
 
-.btn {
-  background: rgba(255, 255, 255, 0.1);
+.control-btn {
+  background: rgba(255, 255, 255, 0.2);
   border: none;
   color: white;
   padding: 8px 15px;
-  border-radius: 8px;
+  border-radius: 5px;
   cursor: pointer;
-  font-family: 'Cairo', sans-serif;
-  font-size: 0.9rem;
   display: flex;
   align-items: center;
   gap: 5px;
-  transition: all 0.3s;
 }
 
-.btn:hover {
-  background: rgba(255, 255, 255, 0.2);
+.control-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
-.btn i {
-  font-size: 1rem;
-}
-
-.back-btn {
-  background: rgba(102, 126, 234, 0.2);
-  color: #667eea;
-}
-
-.back-btn:hover {
-  background: rgba(102, 126, 234, 0.3);
-}
-
-.fullscreen-btn {
-  background: rgba(76, 175, 80, 0.2);
-  color: #4CAF50;
-}
-
-.fullscreen-btn:hover {
-  background: rgba(76, 175, 80, 0.3);
-}
-
-.quality-badge {
-  background: rgba(33, 150, 243, 0.2);
-  color: #2196F3;
-  padding: 5px 10px;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-
-.loading-overlay {
+/* شاشة الخطأ */
+.error-screen {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.95);
+  background: #000;
+  color: white;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  color: white;
   text-align: center;
   padding: 20px;
+  display: none;
 }
 
-.loading-spinner {
-  width: 60px;
-  height: 60px;
-  border: 4px solid rgba(255, 255, 255, 0.1);
-  border-top: 4px solid #667eea;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+.error-icon {
+  font-size: 60px;
+  color: #f00;
   margin-bottom: 20px;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.error-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.95);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  color: white;
-  text-align: center;
-  padding: 20px;
-}
-
-.error-overlay i {
-  font-size: 3rem;
-  color: #f44336;
-  margin-bottom: 20px;
-}
-
-.error-overlay h2 {
-  font-size: 1.5rem;
+.error-title {
+  font-size: 24px;
   margin-bottom: 15px;
   color: #fff;
 }
 
-.error-overlay p {
-  color: rgba(255, 255, 255, 0.9);
+.error-message {
+  font-size: 16px;
+  color: #ccc;
   margin-bottom: 10px;
   line-height: 1.6;
-  font-size: 1rem;
+  max-width: 600px;
 }
 
-.error-solutions {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 15px;
+.solution-box {
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.3);
   border-radius: 10px;
-  margin: 15px 0;
+  padding: 15px;
+  margin: 20px 0;
+  max-width: 600px;
   text-align: right;
-  font-size: 0.9rem;
-  max-width: 500px;
 }
 
-.error-solutions li {
+.solution-box h3 {
+  color: #fff;
+  margin-bottom: 10px;
+  text-align: right;
+}
+
+.solution-box ol {
+  padding-right: 20px;
+  text-align: right;
+}
+
+.solution-box li {
   margin-bottom: 8px;
-  padding-right: 10px;
+  color: #ddd;
 }
 
 .error-buttons {
@@ -240,188 +201,153 @@ body, html {
 }
 
 .error-btn {
-  background: #667eea;
+  background: #f00;
   color: white;
   border: none;
-  padding: 12px 20px;
+  padding: 12px 25px;
   border-radius: 8px;
   cursor: pointer;
-  font-family: 'Cairo', sans-serif;
-  font-size: 1rem;
+  font-size: 16px;
   transition: all 0.3s;
-  min-width: 160px;
+  min-width: 180px;
 }
 
 .error-btn:hover {
-  background: #5a6fd8;
+  background: #c00;
   transform: translateY(-2px);
 }
 
 .error-btn.secondary {
-  background: rgba(255, 255, 255, 0.15);
+  background: #333;
 }
 
 .error-btn.secondary:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: #444;
 }
 
-.error-btn i {
-  margin-left: 8px;
-}
-
-/* عرض معلومات الرابط */
-.stream-info {
+/* شريط المعلومات */
+.info-bar {
   position: absolute;
   bottom: 10px;
   left: 10px;
   right: 10px;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.7);
   color: white;
-  padding: 10px 15px;
-  border-radius: 8px;
-  font-size: 0.8rem;
-  z-index: 100;
-  word-break: break-all;
-  display: none;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 12px;
   text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 100;
+  display: none;
 }
 
-.stream-info.show {
-  display: block;
-}
-
-/* شريط التقدم */
-.progress-container {
-  width: 80%;
-  max-width: 400px;
-  background: rgba(255, 255, 255, 0.1);
-  height: 6px;
-  border-radius: 3px;
-  margin: 15px 0;
-  overflow: hidden;
-}
-
-.progress-bar {
-  height: 100%;
-  background: #667eea;
-  width: 0%;
-  transition: width 0.3s;
-  border-radius: 3px;
-}
-
-@media (max-width: 768px) {
-  .player-header {
-    padding: 10px 15px;
-    height: 60px;
-  }
-  
-  .channel-details h2 {
-    font-size: 1rem;
-  }
-  
-  .btn {
-    padding: 6px 10px;
-    font-size: 0.8rem;
-  }
-  
-  .channel-logo {
-    width: 35px;
-    height: 35px;
-  }
-  
-  .error-buttons {
-    flex-direction: column;
-    width: 90%;
-  }
-  
-  .error-btn {
-    width: 100%;
-    margin-bottom: 10px;
-  }
-  
-  .error-overlay {
-    padding: 15px;
-  }
-  
-  .error-overlay h2 {
-    font-size: 1.2rem;
-  }
-  
-  .error-overlay p {
-    font-size: 0.9rem;
-  }
+/* إصلاحات Clappr */
+.clappr-watermark {
+  width: 40px !important;
+  height: auto !important;
+  position: absolute !important;
+  left: 10px !important;
+  bottom: 10px !important;
+  z-index: 999999 !important;
+  opacity: 0.8 !important;
 }
 </style>
 </head>
 
 <body>
 
-<div class="player-container">
+<div id="player-container">
+  <!-- شريط التحكم العلوي -->
   <div class="player-header">
     <div class="channel-info">
-      <div class="channel-logo">
-        <img id="channel-logo" src="" alt="Channel Logo">
-      </div>
-      <div class="channel-details">
-        <h2 id="channel-name">جاري التحميل...</h2>
-        <p id="channel-group">Leo TV Player</p>
+      <div class="channel-logo" id="channel-logo">TV</div>
+      <div>
+        <div class="channel-name" id="channel-name">جاري التحميل...</div>
+        <div style="font-size: 12px; color: #ccc;" id="channel-info">Leo TV Player</div>
       </div>
     </div>
     
     <div class="controls">
-      <div class="quality-badge" id="quality-display">HD</div>
-      <button class="btn fullscreen-btn" onclick="toggleFullscreen()">
-        <i class="fas fa-expand"></i>
-        <span class="fullscreen-text">ملء الشاشة</span>
+      <button class="control-btn" onclick="toggleFullscreen()">
+        <span id="fullscreen-text">ملء الشاشة</span>
       </button>
-      <button class="btn back-btn" onclick="goBack()">
-        <i class="fas fa-arrow-right"></i>
+      <button class="control-btn" onclick="goBack()">
         <span>العودة</span>
       </button>
     </div>
   </div>
   
-  <div id="player-wrapper">
-    <div id="player"></div>
-    <div id="stream-info" class="stream-info"></div>
+  <!-- المشغل -->
+  <div id="player"></div>
+  
+  <!-- شاشة التحميل -->
+  <div id="loading">
+    <div class="spinner"></div>
+    <h2 id="loading-title">جاري تحميل القناة...</h2>
+    <p id="loading-message">يرجى الانتظار</p>
+    <div id="progress-info" style="margin-top: 20px; font-size: 14px; color: #888;"></div>
+  </div>
+  
+  <!-- شاشة الخطأ -->
+  <div id="error-screen" class="error-screen">
+    <div class="error-icon">⚠️</div>
+    <h2 class="error-title" id="error-title">عذراً! تعذر تشغيل القناة</h2>
     
-    <div id="loading" class="loading-overlay">
-      <div class="loading-spinner"></div>
-      <h2 id="loading-title">جاري تهيئة المشغل...</h2>
-      <p id="loading-status">تحميل مكتبات التشغيل</p>
-      <div class="progress-container">
-        <div class="progress-bar" id="loading-progress"></div>
-      </div>
-      <p id="technical-info" style="margin-top: 10px; font-size: 0.8rem; color: rgba(255,255,255,0.6);"></p>
+    <div class="error-message" id="error-message">
+      <p>القناة: <strong id="error-channel">beIN SPORT 1</strong></p>
+      <p>المشكلة: <strong id="error-problem">غير قادر على تحميل البث</strong></p>
+    </div>
+    
+    <div class="solution-box">
+      <h3>🎯 الحلول المقترحة:</h3>
+      <ol>
+        <li><strong>حل فوري:</strong> افتح هذا الموقع على <a href="#" id="http-link" style="color: #4CAF50;">نسخة HTTP</a> بدلاً من HTTPS</li>
+        <li><strong>بديل:</strong> استخدم متصفح <strong>Mozilla Firefox</strong> فهو يدعم HTTP على HTTPS</li>
+        <li><strong>للمطورين:</strong> استخدم <a href="https://www.netlify.com/" target="_blank" style="color: #00B4D8;">Netlify</a> أو <a href="https://vercel.com/" target="_blank" style="color: #000;">Vercel</a> للاستضافة</li>
+        <li><strong>اختبار:</strong> جرب الموقع على جهازك محلياً (سيعمل 100%)</li>
+        <li><strong>متقدم:</strong> أضف إضافة CORS للمتصفح مثل <em>"Allow CORS"</em></li>
+      </ol>
+    </div>
+    
+    <div class="error-buttons">
+      <button class="error-btn" onclick="retryPlayback()">
+        🔄 إعادة المحاولة
+      </button>
+      <button class="error-btn secondary" onclick="tryAnotherLink()">
+        📺 تجربة رابط آخر
+      </button>
+      <button class="error-btn secondary" onclick="goBack()">
+        ↩ العودة للقائمة
+      </button>
+      <button class="error-btn secondary" onclick="openInFirefox()">
+        🦊 فتح في Firefox
+      </button>
+    </div>
+    
+    <div style="margin-top: 30px; font-size: 12px; color: #666;">
+      <p>معلومة: GitHub Pages يفرض HTTPS مما يمنع تشغيل روابط HTTP (Mixed Content Policy)</p>
+      <p id="tech-info" style="font-family: monospace; margin-top: 5px;"></p>
     </div>
   </div>
+  
+  <!-- شريط المعلومات -->
+  <div class="info-bar" id="info-bar"></div>
 </div>
 
 <script>
 // ============================================
-// متغيرات عامة
+// المتغيرات العامة
 // ============================================
 let player = null;
 let currentStreamIndex = 0;
-let backupStreamsArray = [];
-let isOnline = navigator.onLine;
+let streamSources = [];
+let retryCount = 0;
+const MAX_RETRIES = 3;
 
 // ============================================
-// CORS Proxies (قائمة بالبروكسيات المجانية)
+// روابط قنوات بديلة (مختبرة)
 // ============================================
-const CORS_PROXIES = [
-  'https://corsproxy.io/?',
-  'https://api.codetabs.com/v1/proxy?quest=',
-  'https://cors-anywhere.herokuapp.com/',
-  'https://thingproxy.freeboard.io/fetch/',
-  'https://yacdn.org/proxy/'
-];
-
-// ============================================
-// روابط قنوات احتياطية (مختبرة)
-// ============================================
-const CHANNEL_STREAMS = {
+const STREAM_SOURCES = {
   "beIN SPORT 1": [
     "https://ab.footballii.ir/hls2/bein1_src.m3u8",
     "https://raw.githubusercontent.com/futbolprofeta/links/main/bein1.m3u8",
@@ -430,360 +356,229 @@ const CHANNEL_STREAMS = {
     "https://mn-nl.mncdn.com/blutv/bein1/chunklist.m3u8"
   ],
   "beIN SPORT 2": [
-    "https://bit.ly/bein2-hls",
-    "https://raw.githubusercontent.com/futbolprofeta/links/main/bein2.m3u8",
-    "https://sportcast.one/bein2/index.m3u8",
-    "https://stream2.fastdelivery.net/hls/bein2/index.m3u8"
+    "http://cdn.elsalvadordigital.com:1935/wowza5/ngrp:bein2.stream_all/playlist.m3u8",
+    "http://161.97.145.137:25461/live/borasport/bora/4.m3u8",
+    "https://bit.ly/bein2-hls"
   ],
   "beIN SPORT 3": [
-    "https://bit.ly/bein3-hls",
-    "https://raw.githubusercontent.com/futbolprofeta/links/main/bein3.m3u8",
-    "https://sportcast.one/bein3/index.m3u8",
-    "https://stream2.fastdelivery.net/hls/bein3/index.m3u8"
+    "http://cdn.elsalvadordigital.com:1935/wowza5/ngrp:bein3.stream_all/playlist.m3u8",
+    "http://161.97.145.137:25461/live/borasport/bora/5.m3u8",
+    "https://bit.ly/bein3-hls"
   ],
   "beIN SPORT 4": [
-    "https://bit.ly/bein4-hls",
-    "https://sportcast.one/bein4/index.m3u8",
-    "https://stream2.fastdelivery.net/hls/bein4/index.m3u8"
-  ],
-  "beIN SPORT 5": [
-    "https://bit.ly/bein5-hls",
-    "https://sportcast.one/bein5/index.m3u8",
-    "https://stream2.fastdelivery.net/hls/bein5/index.m3u8"
-  ],
-  "beIN SPORT 6": [
-    "https://bit.ly/bein6-hls",
-    "https://sportcast.one/bein6/index.m3u8",
-    "https://stream2.fastdelivery.net/hls/bein6/index.m3u8"
-  ],
-  "beIN SPORT 7": [
-    "https://bit.ly/bein7-hls",
-    "https://sportcast.one/bein7/index.m3u8",
-    "https://stream2.fastdelivery.net/hls/bein7/index.m3u8"
-  ],
-  "beIN SPORT 8": [
-    "https://bit.ly/bein8-hls",
-    "https://sportcast.one/bein8/index.m3u8",
-    "https://stream2.fastdelivery.net/hls/bein8/index.m3u8"
-  ],
-  "beIN SPORT 9": [
-    "https://bit.ly/bein9-hls",
-    "https://sportcast.one/bein9/index.m3u8",
-    "https://stream2.fastdelivery.net/hls/bein9/index.m3u8"
+    "http://cdn.elsalvadordigital.com:1935/wowza5/ngrp:bein4.stream_all/playlist.m3u8",
+    "http://161.97.145.137:25461/live/borasport/bora/6.m3u8",
+    "https://bit.ly/bein4-hls"
   ]
 };
 
 // ============================================
 // الحصول على بيانات القناة من URL
 // ============================================
-const urlParams = new URLSearchParams(window.location.search);
-const streamUrl = decodeURIComponent(urlParams.get('url') || '');
-const channelName = decodeURIComponent(urlParams.get('name') || 'قناة غير معروفة');
-const channelLogo = decodeURIComponent(urlParams.get('logo') || '');
-const channelGroup = decodeURIComponent(urlParams.get('group') || 'beIN Sports');
-const channelQuality = decodeURIComponent(urlParams.get('quality') || 'HD');
-
-// ============================================
-// تهيئة الواجهة
-// ============================================
-document.getElementById('channel-name').textContent = channelName;
-document.getElementById('channel-group').textContent = channelGroup;
-document.getElementById('quality-display').textContent = channelQuality;
-document.title = `${channelName} - LeoTV`;
-
-// تحميل شعار القناة
-const logoImg = document.getElementById('channel-logo');
-if (channelLogo && channelLogo.startsWith('http')) {
-  logoImg.src = channelLogo;
-  logoImg.onerror = function() {
-    this.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(channelName)}&background=667eea&color=fff&size=40`;
+function getUrlParams() {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    url: decodeURIComponent(params.get('url') || ''),
+    name: decodeURIComponent(params.get('name') || 'قناة غير معروفة'),
+    logo: decodeURIComponent(params.get('logo') || ''),
+    group: decodeURIComponent(params.get('group') || 'beIN Sports'),
+    quality: decodeURIComponent(params.get('quality') || 'HD')
   };
-} else {
-  logoImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(channelName)}&background=667eea&color=fff&size=40`;
+}
+
+const { url, name, logo, group, quality } = getUrlParams();
+
+// ============================================
+// تهيئة الصفحة
+// ============================================
+function initPage() {
+  // تحديث معلومات القناة
+  document.getElementById('channel-name').textContent = name;
+  document.getElementById('channel-info').textContent = `${group} • ${quality}`;
+  document.getElementById('error-channel').textContent = name;
+  document.title = `${name} - Leo TV`;
+  
+  // تحديث الرابط HTTP
+  const httpLink = document.getElementById('http-link');
+  if (httpLink) {
+    const httpUrl = window.location.href.replace('https://', 'http://');
+    httpLink.href = httpUrl;
+    httpLink.textContent = httpUrl;
+  }
+  
+  // عرض معلومات تقنية
+  document.getElementById('tech-info').textContent = 
+    `المتصفح: ${navigator.userAgent.split(' ')[0]} | HTTPS: ${window.location.protocol === 'https:'}`;
+  
+  // إعداد مصادر البث
+  streamSources = [url];
+  if (STREAM_SOURCES[name]) {
+    streamSources = [...streamSources, ...STREAM_SOURCES[name]];
+  }
+  
+  // بدء التشغيل
+  startPlayback();
 }
 
 // ============================================
-// وظائف المساعدة
+// تشغيل البث
 // ============================================
-
-// دالة لإضافة CORS proxy للرابط
-function addCorsProxy(url, proxyIndex = 0) {
-  if (url.startsWith('blob:') || url.startsWith('data:')) {
-    return url;
+function startPlayback() {
+  const streamUrl = streamSources[currentStreamIndex];
+  
+  // تحديث حالة التحميل
+  document.getElementById('loading-message').textContent = 
+    `جاري تجربة الرابط ${currentStreamIndex + 1} من ${streamSources.length}`;
+  document.getElementById('progress-info').textContent = 
+    `الرابط: ${streamUrl.substring(0, 50)}...`;
+  
+  // تدمير المشغل السابق
+  if (player) {
+    player.destroy();
   }
   
-  // إذا كان الرابط من مواقع موثوقة، لا نضيف proxy
-  const trustedDomains = ['githubusercontent.com', 'raw.githubusercontent.com', 'bit.ly', 't.me'];
-  const isTrusted = trustedDomains.some(domain => url.includes(domain));
-  
-  if (isTrusted || url.startsWith('https://')) {
-    return url;
-  }
-  
-  // إضافة proxy للروابط HTTP
-  if (url.startsWith('http://')) {
-    const proxy = CORS_PROXIES[proxyIndex % CORS_PROXIES.length];
-    return proxy + encodeURIComponent(url);
-  }
-  
-  return url;
-}
-
-// دالة لاختبار الرابط
-async function testStream(url) {
-  return new Promise((resolve) => {
-    const testUrl = url.startsWith('http://') ? addCorsProxy(url) : url;
-    
-    fetch(testUrl, { 
-      method: 'HEAD',
-      mode: 'cors',
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-      }
-    })
-    .then(response => {
-      if (response.ok || response.status === 0) {
-        resolve(true);
-      } else {
-        resolve(false);
-      }
-    })
-    .catch(() => {
-      // تجربة بدون CORS
-      fetch(url, { method: 'HEAD', mode: 'no-cors' })
-        .then(() => resolve(true))
-        .catch(() => resolve(false));
-    });
-  });
-}
-
-// دالة لتحديث شريط التقدم
-function updateProgress(percent, message) {
-  const progressBar = document.getElementById('loading-progress');
-  const loadingStatus = document.getElementById('loading-status');
-  
-  if (progressBar) {
-    progressBar.style.width = `${percent}%`;
-  }
-  
-  if (loadingStatus && message) {
-    loadingStatus.textContent = message;
-  }
-}
-
-// ============================================
-// الوظيفة الرئيسية لتشغيل البث
-// ============================================
-async function playStream() {
+  // إنشاء مشغل جديد
   try {
-    // إعداد قائمة الروابط
-    backupStreamsArray = [streamUrl];
-    if (CHANNEL_STREAMS[channelName]) {
-      backupStreamsArray = [...backupStreamsArray, ...CHANNEL_STREAMS[channelName]];
-    }
-    
-    // عرض حالة التحميل
-    updateProgress(10, `جاري تجهيز ${channelName}...`);
-    
-    // تدمير المشغل السابق إذا كان موجوداً
-    if (player) {
-      player.destroy();
-      player = null;
-    }
-    
-    // الحصول على الرابط الحالي
-    const currentUrl = backupStreamsArray[currentStreamIndex];
-    updateProgress(30, `جاري اختبار الرابط (${currentStreamIndex + 1}/${backupStreamsArray.length})...`);
-    
-    // اختبار الرابط
-    const isWorking = await testStream(currentUrl);
-    
-    if (!isWorking && currentStreamIndex < backupStreamsArray.length - 1) {
-      // تجربة الرابط التالي
-      currentStreamIndex++;
-      updateProgress(20, `الرابط غير متاح، جاري تجربة رابط آخر...`);
-      setTimeout(playStream, 500);
-      return;
-    }
-    
-    // إعداد الرابط النهائي مع CORS proxy إذا لزم الأمر
-    let finalUrl = currentUrl;
-    if (currentUrl.startsWith('http://')) {
-      finalUrl = addCorsProxy(currentUrl, currentStreamIndex);
-    }
-    
-    updateProgress(60, `جاري تشغيل البث...`);
-    document.getElementById('stream-info').textContent = `القناة: ${channelName} | الرابط: ${currentUrl.substring(0, 60)}...`;
-    document.getElementById('stream-info').classList.add('show');
-    
-    // تكوين مشغل Clappr
     player = new Clappr.Player({
-      source: finalUrl,
+      source: streamUrl,
       autoPlay: true,
       height: '100%',
       width: '100%',
       parentId: '#player',
       mute: false,
-      volume: 100,
-      hlsjsConfig: {
-        enableWorker: true,
-        liveSyncDurationCount: 7,
-        liveMaxLatencyDurationCount: 12,
-        maxBufferLength: 30,
-        maxMaxBufferLength: 60
-      },
-      mediacontrol: {
-        seekbar: '#667eea',
-        buttons: '#FFFFFF'
-      },
+      volume: 70,
       watermark: 'https://i.imgur.com/6QyTLyj.png',
       position: 'bottom-left',
       watermarkLink: '#',
-      playbackNotSupportedMessage: 'المتصفح الحالي لا يدعم تشغيل هذا النوع من البث',
-      actualLiveTime: true,
-      hideVolumeBar: false
+      mediacontrol: {
+        seekbar: '#FF0000',
+        buttons: '#FFFFFF'
+      },
+      playbackNotSupportedMessage: 'المتصفح الحالي لا يدعم تشغيل هذا النوع من البث'
     });
     
     // أحداث المشغل
     player.on('ready', () => {
-      updateProgress(100, 'البث يعمل الآن!');
-      setTimeout(() => {
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('stream-info').classList.remove('show');
-      }, 1000);
+      console.log('المشغل جاهز');
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('info-bar').textContent = 
+        `القناة: ${name} | الحالة: مباشر | الجودة: ${quality}`;
+      document.getElementById('info-bar').style.display = 'block';
     });
     
     player.on('play', () => {
+      console.log('بدأ التشغيل');
       document.getElementById('loading').style.display = 'none';
     });
     
     player.on('error', (error) => {
-      console.error('Clappr error:', error);
-      
-      if (currentStreamIndex < backupStreamsArray.length - 1) {
-        currentStreamIndex++;
-        updateProgress(30, `حدث خطأ، جاري تجربة رابط بديل...`);
-        setTimeout(playStream, 1000);
-      } else {
-        showError();
-      }
+      console.error('خطأ في المشغل:', error);
+      handlePlaybackError();
     });
     
     player.on('buffering', () => {
       document.getElementById('loading').style.display = 'flex';
       document.getElementById('loading-title').textContent = 'جاري التحميل...';
-      document.getElementById('loading-status').textContent = 'يرجى الانتظار قليلاً';
     });
     
-    player.on('buffering:stop', () => {
-      setTimeout(() => {
-        document.getElementById('loading').style.display = 'none';
-      }, 500);
-    });
+    // اختبار التشغيل بعد 5 ثواني
+    setTimeout(() => {
+      if (document.getElementById('loading').style.display !== 'none') {
+        handlePlaybackError();
+      }
+    }, 5000);
     
   } catch (error) {
-    console.error('Error in playStream:', error);
-    showError();
+    console.error('خطأ في تهيئة المشغل:', error);
+    handlePlaybackError();
   }
 }
 
 // ============================================
-// عرض رسالة الخطأ
+// معالجة الأخطاء
 // ============================================
-function showError() {
-  document.getElementById('loading').style.display = 'none';
+function handlePlaybackError() {
+  retryCount++;
   
-  const errorHTML = `
-    <div class="error-overlay">
-      <i class="fas fa-exclamation-triangle"></i>
-      <h2>عذراً! تعذر تشغيل القناة</h2>
-      
-      <p>القناة: <strong>${channelName}</strong></p>
-      <p>جربنا ${currentStreamIndex + 1} من ${backupStreamsArray.length} رابطاً</p>
-      
-      <div class="error-solutions">
-        <h3 style="text-align:right; margin-bottom:10px;">الحلول المقترحة:</h3>
-        <ol style="text-align:right; padding-right:20px;">
-          <li>اضغط على زر "تجربة رابط آخر" لمعاودة المحاولة</li>
-          <li>إذا كنت على <strong>GitHub Pages</strong>، جرب استخدام خدمة استضافة أخرى</li>
-          <li>يمكنك فتح الموقع على <code>http://</code> بدلاً من <code>https://</code></li>
-          <li>استخدم متصفح <strong>Firefox</strong> فهو يدعم تشغيل HTTP على HTTPS</li>
-          <li>تحقق من اتصالك بالإنترنت وأعد تحميل الصفحة</li>
-        </ol>
-      </div>
-      
-      <div class="error-buttons">
-        <button class="error-btn" onclick="tryNextStream()">
-          <i class="fas fa-redo"></i> تجربة رابط آخر (${currentStreamIndex + 1}/${backupStreamsArray.length})
-        </button>
-        
-        <button class="error-btn secondary" onclick="goBack()">
-          <i class="fas fa-arrow-right"></i> العودة للقائمة
-        </button>
-        
-        <button class="error-btn secondary" onclick="location.reload()">
-          <i class="fas fa-sync-alt"></i> إعادة تحميل
-        </button>
-        
-        <button class="error-btn secondary" onclick="openLocal()">
-          <i class="fas fa-desktop"></i> تشغيل محلياً
-        </button>
-      </div>
-      
-      <p style="margin-top:20px; font-size:0.8rem; color:rgba(255,255,255,0.6)">
-        ملاحظة: GitHub Pages يفرض HTTPS مما يمنع تشغيل روابط HTTP
-      </p>
-    </div>
-  `;
-  
-  // إزالة أي رسائل خطأ سابقة
-  const existingError = document.querySelector('.error-overlay');
-  if (existingError) {
-    existingError.remove();
+  if (retryCount <= MAX_RETRIES) {
+    // إعادة المحاولة
+    document.getElementById('loading-message').textContent = 
+      `المحاولة ${retryCount} من ${MAX_RETRIES}...`;
+    setTimeout(startPlayback, 1000);
+    return;
   }
   
-  // إضافة رسالة الخطأ الجديدة
-  document.getElementById('player-wrapper').insertAdjacentHTML('beforeend', errorHTML);
+  // إذا فشلت جميع المحاولات
+  if (currentStreamIndex < streamSources.length - 1) {
+    // تجربة رابط آخر
+    currentStreamIndex++;
+    retryCount = 0;
+    document.getElementById('loading-message').textContent = 
+      `جاري تجربة رابط آخر...`;
+    setTimeout(startPlayback, 500);
+  } else {
+    // فشل جميع الروابط
+    showError('فشل تشغيل القناة. جميع الروابط غير متاحة.');
+  }
+}
+
+// ============================================
+// عرض شاشة الخطأ
+// ============================================
+function showError(message) {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('error-problem').textContent = message;
+  document.getElementById('error-screen').style.display = 'flex';
+  
+  // إخفاء المشغل
+  if (player) {
+    player.destroy();
+    player = null;
+  }
 }
 
 // ============================================
 // وظائف التحكم
 // ============================================
-function tryNextStream() {
-  if (currentStreamIndex < backupStreamsArray.length - 1) {
+function retryPlayback() {
+  retryCount = 0;
+  document.getElementById('error-screen').style.display = 'none';
+  document.getElementById('loading').style.display = 'flex';
+  startPlayback();
+}
+
+function tryAnotherLink() {
+  if (currentStreamIndex < streamSources.length - 1) {
     currentStreamIndex++;
-    document.querySelector('.error-overlay')?.remove();
+    retryCount = 0;
+    document.getElementById('error-screen').style.display = 'none';
     document.getElementById('loading').style.display = 'flex';
-    updateProgress(20, 'جربة رابط جديد...');
-    setTimeout(playStream, 500);
+    startPlayback();
   } else {
     alert('لا توجد روابط أخرى متاحة لهذه القناة.');
   }
 }
 
-function openLocal() {
-  // إنشاء نسخة محلية تعمل بدون HTTPS
-  const localUrl = window.location.href.replace('https://', 'http://');
-  window.open(localUrl, '_blank');
+function openInFirefox() {
+  const firefoxUrl = `firefox:${window.location.href}`;
+  window.open(firefoxUrl, '_blank');
 }
 
 function toggleFullscreen() {
-  const elem = document.documentElement;
+  const elem = document.getElementById('player-container');
   
   if (!document.fullscreenElement) {
     if (elem.requestFullscreen) elem.requestFullscreen();
     else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
     else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
     
-    document.querySelector('.fullscreen-text').textContent = 'تصغير';
-    document.querySelector('.fullscreen-btn i').className = 'fas fa-compress';
+    document.getElementById('fullscreen-text').textContent = 'تصغير';
   } else {
     if (document.exitFullscreen) document.exitFullscreen();
     else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
     else if (document.msExitFullscreen) document.msExitFullscreen();
     
-    document.querySelector('.fullscreen-text').textContent = 'ملء الشاشة';
-    document.querySelector('.fullscreen-btn i').className = 'fas fa-expand';
+    document.getElementById('fullscreen-text').textContent = 'ملء الشاشة';
   }
 }
 
@@ -793,48 +588,33 @@ function goBack() {
   } else if (window.history.length > 1) {
     window.history.back();
   } else {
-    window.close();
+    // العودة إلى الصفحة الرئيسية
+    window.location.href = window.location.href.replace('player.html', 'index.html');
   }
 }
 
 // ============================================
 // أحداث الصفحة
 // ============================================
-document.addEventListener('DOMContentLoaded', () => {
-  // تحديث معلومات المتصفح
-  const techInfo = document.getElementById('technical-info');
-  if (techInfo) {
-    techInfo.textContent = `المتصفح: ${navigator.userAgent.split(' ')[0]} | يدعم HLS: ${Hls.isSupported() ? 'نعم' : 'لا'}`;
-  }
-  
-  // بدء التشغيل بعد تحميل الصفحة
-  setTimeout(() => {
-    if (Hls.isSupported()) {
-      playStream();
-    } else {
-      showError('المتصفح الحالي لا يدعم تشغيل HLS. يرجى استخدام Chrome أو Firefox.');
-    }
-  }, 1000);
+document.addEventListener('DOMContentLoaded', initPage);
+
+// أحداث ملء الشاشة
+document.addEventListener('fullscreenchange', () => {
+  const isFullscreen = !!document.fullscreenElement;
+  document.getElementById('fullscreen-text').textContent = isFullscreen ? 'تصغير' : 'ملء الشاشة';
 });
 
 // أحداث اتصال الإنترنت
 window.addEventListener('online', () => {
-  isOnline = true;
+  console.log('اتصال الإنترنت متاح');
   if (player && !player.isPlaying()) {
     player.play();
   }
 });
 
 window.addEventListener('offline', () => {
-  isOnline = false;
+  console.log('فقد الاتصال بالإنترنت');
   showError('فقد الاتصال بالإنترنت. يرجى التحقق من اتصالك.');
-});
-
-// تحديث زر ملء الشاشة
-document.addEventListener('fullscreenchange', () => {
-  const isFullscreen = !!document.fullscreenElement;
-  document.querySelector('.fullscreen-text').textContent = isFullscreen ? 'تصغير' : 'ملء الشاشة';
-  document.querySelector('.fullscreen-btn i').className = isFullscreen ? 'fas fa-compress' : 'fas fa-expand';
 });
 </script>
 
