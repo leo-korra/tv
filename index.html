@@ -17,9 +17,13 @@
   --primary-dark: #1d4ed8;
   --secondary: #7c3aed;
   --accent: #ec4899;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
   --glass-bg: rgba(255, 255, 255, 0.08);
   --glass-border: rgba(255, 255, 255, 0.12);
   --blur: blur(15px);
+  --sidebar-width: 280px;
 }
 
 * {
@@ -58,10 +62,170 @@ body::before {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
+.app-container {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  gap: 15px;
+}
+
+/* شريط التحكم الجانبي */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  height: calc(100vh - 30px);
+  position: sticky;
+  top: 15px;
+}
+
+.sidebar-section {
+  padding: 20px;
+  flex-shrink: 0;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 15px;
+}
+
+.user-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.user-info h3 {
+  color: white;
+  font-size: 1rem;
+  margin-bottom: 5px;
+}
+
+.user-status {
+  font-size: 0.75rem;
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--success);
+  display: inline-block;
+}
+
+.plan-indicator {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 10px;
+}
+
+.plan-title {
+  color: white;
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.plan-title .badge {
+  background: var(--accent);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+}
+
+.plan-progress {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.plan-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  border-radius: 3px;
+  width: 65%;
+}
+
+.plan-stats {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: space-between;
+}
+
+.sidebar-menu {
+  list-style: none;
+  flex-grow: 1;
+}
+
+.sidebar-menu li {
+  margin-bottom: 8px;
+}
+
+.sidebar-menu a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.sidebar-menu a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.sidebar-menu a.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.sidebar-menu a i {
+  width: 20px;
+  text-align: center;
+}
+
+.sidebar-footer {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* المحتوى الرئيسي */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
 .header {
   text-align: center;
   padding: 20px;
-  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-left {
+  text-align: right;
 }
 
 .header h1 {
@@ -79,13 +243,39 @@ body::before {
   font-size: 0.9rem;
 }
 
+.header-stats {
+  display: flex;
+  gap: 15px;
+}
+
+.stat-box {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 12px 20px;
+  border-radius: 12px;
+  text-align: center;
+  min-width: 100px;
+}
+
+.stat-value {
+  color: white;
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
 .search-section {
-  margin-bottom: 15px;
   padding: 15px;
+  display: flex;
+  gap: 10px;
 }
 
 .search-box {
-  width: 100%;
+  flex: 1;
   padding: 14px 20px;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -141,8 +331,26 @@ body::before {
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
+.filter-btn.premium {
+  position: relative;
+  overflow: hidden;
+}
+
+.filter-btn.premium::after {
+  content: "PREMIUM";
+  position: absolute;
+  top: -8px;
+  left: -25px;
+  background: var(--accent);
+  color: white;
+  font-size: 0.6rem;
+  padding: 2px 20px;
+  transform: rotate(-45deg);
+}
+
 .channels-section {
   padding: 15px;
+  flex-grow: 1;
 }
 
 .channels-grid {
@@ -180,6 +388,10 @@ body::before {
   border: 2px solid var(--primary);
   transform: scale(1.02);
   box-shadow: 0 0 20px rgba(37, 99, 235, 0.4);
+}
+
+.channel-card.premium {
+  border-left: 4px solid var(--accent);
 }
 
 .channel-logo {
@@ -229,6 +441,34 @@ body::before {
   border-radius: 6px;
   font-size: 0.65rem;
   font-weight: 700;
+}
+
+.fav-btn {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.fav-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.fav-btn.active {
+  background: var(--accent);
+  color: white;
 }
 
 /* أزرار الجودة داخل البطاقة */
@@ -289,6 +529,11 @@ body::before {
   color: white;
 }
 
+.group-header i {
+  margin-left: 10px;
+  color: var(--primary);
+}
+
 .loading {
   text-align: center;
   padding: 40px 20px;
@@ -315,6 +560,123 @@ body::before {
   padding: 30px;
   color: rgba(255, 255, 255, 0.6);
   grid-column: 1 / -1;
+}
+
+/* مشغل الفيديو */
+.video-player-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-player-container {
+  width: 90%;
+  max-width: 1000px;
+  background: #0f172a;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.video-header {
+  padding: 15px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.video-header h3 {
+  color: white;
+  font-size: 1.2rem;
+}
+
+.close-player {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.close-player:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(90deg);
+}
+
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* نسبة 16:9 */
+  background: #000;
+}
+
+#video-player {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.video-controls {
+  padding: 15px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-controls button {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.video-controls button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.video-controls .play-btn {
+  background: var(--primary);
+}
+
+.video-controls .play-btn:hover {
+  background: var(--primary-dark);
+}
+
+.video-info {
+  padding: 15px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .remote-controls {
@@ -351,32 +713,6 @@ body::before {
   transform: scale(0.95);
 }
 
-@media (max-width: 768px) {
-  .channels-grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  }
-}
-
-@media (max-width: 480px) {
-  .channels-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .header h1 {
-    font-size: 1.8rem;
-  }
-  
-  .quality-selector {
-    flex-direction: column;
-  }
-}
-
-@media (min-width: 1024px) {
-  .remote-controls {
-    display: flex;
-  }
-}
-
 /* رسالة تنبيه سريعة */
 .quick-notice {
   position: fixed;
@@ -402,59 +738,256 @@ body::before {
   opacity: 1;
   visibility: visible;
 }
+
+/* تخصيص شريط التمرير */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* التجاوب */
+@media (max-width: 1200px) {
+  .app-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar {
+    display: none;
+  }
+  
+  .channels-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .channels-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+  
+  .header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+  
+  .header-stats {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .stat-box {
+    min-width: 80px;
+    padding: 10px 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .channels-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .quality-selector {
+    flex-direction: column;
+  }
+  
+  .filter-buttons {
+    overflow-x: auto;
+    padding-bottom: 10px;
+    justify-content: flex-start;
+  }
+}
+
+@media (min-width: 1024px) {
+  .remote-controls {
+    display: flex;
+  }
+}
 </style>
 </head>
 
 <body>
 
-<header class="header glass-panel">
-  <h1>Leo TV</h1>
-  <div class="subtitle">منصة IPTV متطورة - شاهد قنواتك المفضلة</div>
-</header>
-
-<section class="search-section glass-panel">
-  <input type="text" id="search-input" class="search-box" placeholder="ابحث عن قناة...">
-</section>
-
-<div class="filter-buttons" id="filter-buttons">
-  <button class="filter-btn active" data-filter="all">
-    <i class="fas fa-list"></i> الكل
-  </button>
-  <button class="filter-btn" data-filter="رياضي">
-    <i class="fas fa-futbol"></i> رياضية
-  </button>
-  <button class="filter-btn" data-filter="ترفيهي">
-    <i class="fas fa-film"></i> ترفيهية
-  </button>
-  <button class="filter-btn" data-filter="أخبار">
-    <i class="fas fa-newspaper"></i> أخبار
-  </button>
+<div class="video-player-overlay" id="video-player-overlay">
+  <div class="video-player-container">
+    <div class="video-header">
+      <h3 id="video-title">Leo TV Player</h3>
+      <button class="close-player" onclick="closeVideoPlayer()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="video-wrapper">
+      <video id="video-player" controls autoplay>
+        <source id="video-source" src="" type="application/x-mpegURL">
+        متصفحك لا يدعم تشغيل الفيديو.
+      </video>
+    </div>
+    
+    <div class="video-controls">
+      <button onclick="videoControl('volume-up')">
+        <i class="fas fa-volume-up"></i>
+      </button>
+      <button onclick="videoControl('rewind')">
+        <i class="fas fa-backward"></i>
+      </button>
+      <button class="play-btn" onclick="videoControl('play-pause')">
+        <i class="fas fa-pause" id="play-pause-icon"></i>
+      </button>
+      <button onclick="videoControl('forward')">
+        <i class="fas fa-forward"></i>
+      </button>
+      <button onclick="videoControl('fullscreen')">
+        <i class="fas fa-expand"></i>
+      </button>
+    </div>
+    
+    <div class="video-info">
+      <p id="video-info-text">جودة: HD | حالة: جيدة</p>
+    </div>
+  </div>
 </div>
 
-<section class="channels-section glass-panel">
-  <div class="channels-grid" id="channels">
-    <!-- القنوات يتم إضافتها هنا -->
-  </div>
-  
-  <div id="loading" class="loading" style="display: none;">
-    <div class="spinner"></div>
-    جاري تحميل القنوات...
-  </div>
-  
-  <div id="no-results" class="no-results" style="display: none;">
-    <i class="fas fa-tv"></i>
-    <p>لم يتم العثور على قنوات تطابق بحثك</p>
-  </div>
-</section>
+<div class="app-container">
+  <!-- الشريط الجانبي -->
+  <aside class="sidebar">
+    <div class="sidebar-section glass-panel">
+      <div class="user-profile">
+        <div class="user-avatar">L</div>
+        <div class="user-info">
+          <h3>مستخدم Leo TV</h3>
+          <span class="user-status">نشط</span>
+        </div>
+      </div>
+      
+      <div class="plan-indicator">
+        <div class="plan-title">
+          <span>الباقة الحالية</span>
+          <span class="badge">Premium</span>
+        </div>
+        <div class="plan-progress">
+          <div class="plan-progress-fill" id="plan-progress"></div>
+        </div>
+        <div class="plan-stats">
+          <span>123 قناة نشطة</span>
+          <span>65% مستخدم</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="sidebar-section glass-panel">
+      <ul class="sidebar-menu">
+        <li><a href="#" class="active"><i class="fas fa-tv"></i> جميع القنوات</a></li>
+        <li><a href="#" onclick="showFavorites()"><i class="fas fa-heart"></i> المفضلة <span id="fav-count" class="badge">0</span></a></li>
+        <li><a href="#"><i class="fas fa-futbol"></i> القنوات الرياضية</a></li>
+        <li><a href="#"><i class="fas fa-film"></i> الأفلام والمسلسلات</a></li>
+        <li><a href="#"><i class="fas fa-newspaper"></i> الأخبار</a></li>
+        <li><a href="#"><i class="fas fa-child"></i> الأطفال</a></li>
+        <li><a href="#"><i class="fas fa-music"></i> الموسيقى</a></li>
+        <li><a href="#"><i class="fas fa-cog"></i> الإعدادات</a></li>
+      </ul>
+      
+      <div class="sidebar-footer">
+        Leo TV &copy; 2023 - جميع الحقوق محفوظة
+      </div>
+    </div>
+  </aside>
 
-<div class="remote-controls">
-  <button class="remote-btn" onclick="navigateRemote('up')">⬆️</button>
-  <div style="display: flex; flex-direction: column; gap: 5px;">
-    <button class="remote-btn" onclick="navigateRemote('left')">⬅️</button>
-    <button class="remote-btn" onclick="activateCurrent()">⏺️</button>
-    <button class="remote-btn" onclick="navigateRemote('right')">➡️</button>
-  </div>
-  <button class="remote-btn" onclick="navigateRemote('down')">⬇️</button>
+  <!-- المحتوى الرئيسي -->
+  <main class="main-content">
+    <header class="header glass-panel">
+      <div class="header-left">
+        <h1>Leo TV</h1>
+        <div class="subtitle">منصة IPTV متطورة - شاهد قنواتك المفضلة</div>
+      </div>
+      
+      <div class="header-stats">
+        <div class="stat-box glass-panel">
+          <div class="stat-value" id="total-channels">0</div>
+          <div class="stat-label">قناة</div>
+        </div>
+        <div class="stat-box glass-panel">
+          <div class="stat-value" id="live-channels">0</div>
+          <div class="stat-label">مباشر</div>
+        </div>
+        <div class="stat-box glass-panel">
+          <div class="stat-value" id="fav-channels">0</div>
+          <div class="stat-label">مفضلة</div>
+        </div>
+      </div>
+    </header>
+
+    <section class="search-section glass-panel">
+      <input type="text" id="search-input" class="search-box" placeholder="ابحث عن قناة...">
+      <button class="filter-btn" onclick="showAdvancedFilters()">
+        <i class="fas fa-filter"></i> فلتر متقدم
+      </button>
+    </section>
+
+    <div class="filter-buttons" id="filter-buttons">
+      <button class="filter-btn active" data-filter="all">
+        <i class="fas fa-list"></i> الكل
+      </button>
+      <button class="filter-btn" data-filter="رياضي">
+        <i class="fas fa-futbol"></i> رياضية
+      </button>
+      <button class="filter-btn" data-filter="ترفيهي">
+        <i class="fas fa-film"></i> ترفيهية
+      </button>
+      <button class="filter-btn" data-filter="أخبار">
+        <i class="fas fa-newspaper"></i> أخبار
+      </button>
+      <button class="filter-btn premium" data-filter="premium">
+        <i class="fas fa-crown"></i> Premium
+      </button>
+      <button class="filter-btn" onclick="showFavorites()">
+        <i class="fas fa-heart"></i> المفضلة
+      </button>
+    </div>
+
+    <section class="channels-section glass-panel">
+      <div class="channels-grid" id="channels">
+        <!-- القنوات يتم إضافتها هنا -->
+      </div>
+      
+      <div id="loading" class="loading" style="display: none;">
+        <div class="spinner"></div>
+        جاري تحميل القنوات...
+      </div>
+      
+      <div id="no-results" class="no-results" style="display: none;">
+        <i class="fas fa-tv" style="font-size: 2rem; margin-bottom: 10px;"></i>
+        <p>لم يتم العثور على قنوات تطابق بحثك</p>
+      </div>
+    </section>
+
+    <div class="remote-controls">
+      <button class="remote-btn" onclick="navigateRemote('up')">⬆️</button>
+      <div style="display: flex; flex-direction: column; gap: 5px;">
+        <button class="remote-btn" onclick="navigateRemote('left')">⬅️</button>
+        <button class="remote-btn" onclick="activateCurrent()">⏺️</button>
+        <button class="remote-btn" onclick="navigateRemote('right')">➡️</button>
+      </div>
+      <button class="remote-btn" onclick="navigateRemote('down')">⬇️</button>
+    </div>
+  </main>
 </div>
 
 <!-- رسالة تنبيه -->
@@ -465,15 +998,17 @@ body::before {
 <script>
 // بيانات القنوات مع رواقع m3u8
 const channelsData = [
+  // beIN Sports القنوات
   {
     name: "beIN SPORT 1",
     logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Bein_Sports_1_logo.svg/1200px-Bein_Sports_1_logo.svg.png",
     group: "beIN Sports",
     category: "رياضي",
+    plan: "premium",
     qualities: {
-      "SD": "http://135.125.109.73:9000/beinsport1_.m3u8",
-      "HD": "https://ab.footballii.ir/hls2/bein1_src.m3u8",
-      "FHD": "https://ab.footballii.ir/hls2/bein1_src.m3u8"
+      "SD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein1/bein1-360p.m3u8",
+      "HD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein1/bein1-720p.m3u8",
+      "FHD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein1/bein1-1080p.m3u8"
     },
     server: "Leo Servers",
     status: "مباشر"
@@ -483,6 +1018,7 @@ const channelsData = [
     logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Bein_Sports_1_logo.svg/1200px-Bein_Sports_1_logo.svg.png",
     group: "beIN Sports",
     category: "رياضي",
+    plan: "premium",
     qualities: {
       "SD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein2/bein2-360p.m3u8",
       "HD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein2/bein2-720p.m3u8",
@@ -496,6 +1032,7 @@ const channelsData = [
     logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Bein_Sports_1_logo.svg/1200px-Bein_Sports_1_logo.svg.png",
     group: "beIN Sports",
     category: "رياضي",
+    plan: "premium",
     qualities: {
       "SD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein3/bein3-360p.m3u8",
       "HD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein3/bein3-720p.m3u8",
@@ -505,10 +1042,169 @@ const channelsData = [
     status: "مباشر"
   },
   {
+    name: "beIN SPORT 4",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Bein_Sports_1_logo.svg/1200px-Bein_Sports_1_logo.svg.png",
+    group: "beIN Sports",
+    category: "رياضي",
+    plan: "premium",
+    qualities: {
+      "SD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein4/bein4-360p.m3u8",
+      "HD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein4/bein4-720p.m3u8",
+      "FHD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein4/bein4-1080p.m3u8"
+    },
+    server: "Leo Servers",
+    status: "مباشر"
+  },
+  {
+    name: "beIN SPORT 5",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Bein_Sports_1_logo.svg/1200px-Bein_Sports_1_logo.svg.png",
+    group: "beIN Sports",
+    category: "رياضي",
+    plan: "premium",
+    qualities: {
+      "SD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein5/bein5-360p.m3u8",
+      "HD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein5/bein5-720p.m3u8",
+      "FHD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein5/bein5-1080p.m3u8"
+    },
+    server: "Leo Servers",
+    status: "مباشر"
+  },
+  {
+    name: "beIN SPORT 6",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Bein_Sports_1_logo.svg/1200px-Bein_Sports_1_logo.svg.png",
+    group: "beIN Sports",
+    category: "رياضي",
+    plan: "premium",
+    qualities: {
+      "SD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein6/bein6-360p.m3u8",
+      "HD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein6/bein6-720p.m3u8",
+      "FHD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein6/bein6-1080p.m3u8"
+    },
+    server: "Leo Servers",
+    status: "مباشر"
+  },
+  {
+    name: "beIN SPORT 7",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Bein_Sports_1_logo.svg/1200px-Bein_Sports_1_logo.svg.png",
+    group: "beIN Sports",
+    category: "رياضي",
+    plan: "premium",
+    qualities: {
+      "SD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein7/bein7-360p.m3u8",
+      "HD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein7/bein7-720p.m3u8",
+      "FHD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein7/bein7-1080p.m3u8"
+    },
+    server: "Leo Servers",
+    status: "مباشر"
+  },
+  {
+    name: "beIN SPORT 8",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Bein_Sports_1_logo.svg/1200px-Bein_Sports_1_logo.svg.png",
+    group: "beIN Sports",
+    category: "رياضي",
+    plan: "premium",
+    qualities: {
+      "SD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein8/bein8-360p.m3u8",
+      "HD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein8/bein8-720p.m3u8",
+      "FHD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein8/bein8-1080p.m3u8"
+    },
+    server: "Leo Servers",
+    status: "مباشر"
+  },
+  {
+    name: "beIN SPORT 9",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Bein_Sports_1_logo.svg/1200px-Bein_Sports_1_logo.svg.png",
+    group: "beIN Sports",
+    category: "رياضي",
+    plan: "premium",
+    qualities: {
+      "SD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein9/bein9-360p.m3u8",
+      "HD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein9/bein9-720p.m3u8",
+      "FHD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein9/bein9-1080p.m3u8"
+    },
+    server: "Leo Servers",
+    status: "مباشر"
+  },
+  {
+    name: "beIN SPORT 10",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Bein_Sports_1_logo.svg/1200px-Bein_Sports_1_logo.svg.png",
+    group: "beIN Sports",
+    category: "رياضي",
+    plan: "premium",
+    qualities: {
+      "SD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein10/bein10-360p.m3u8",
+      "HD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein10/bein10-720p.m3u8",
+      "FHD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein10/bein10-1080p.m3u8"
+    },
+    server: "Leo Servers",
+    status: "مباشر"
+  },
+  {
+    name: "beIN SPORT 11",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Bein_Sports_1_logo.svg/1200px-Bein_Sports_1_logo.svg.png",
+    group: "beIN Sports",
+    category: "رياضي",
+    plan: "premium",
+    qualities: {
+      "SD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein11/bein11-360p.m3u8",
+      "HD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein11/bein11-720p.m3u8",
+      "FHD": "https://cdn-df-ios.sportdigital.tv/stream/hls/bein11/bein11-1080p.m3u8"
+    },
+    server: "Leo Servers",
+    status: "مباشر"
+  },
+  
+  // قنوات الوان الرياضية
+  {
+    name: "الوان رياضية 1",
+    logo: "https://www.alawwanalarabiya.com/images/logo.png",
+    group: "الوان رياضية",
+    category: "رياضي",
+    plan: "basic",
+    qualities: {
+      "SD": "https://stream.alawwanalarabiya.com/hls/alawwan1_360p.m3u8",
+      "HD": "https://stream.alawwanalarabiya.com/hls/alawwan1_720p.m3u8",
+      "FHD": "https://stream.alawwanalarabiya.com/hls/alawwan1_1080p.m3u8"
+    },
+    server: "Leo Servers",
+    status: "مباشر"
+  },
+  {
+    name: "الوان رياضية 2",
+    logo: "https://www.alawwanalarabiya.com/images/logo.png",
+    group: "الوان رياضية",
+    category: "رياضي",
+    plan: "basic",
+    qualities: {
+      "SD": "https://stream.alawwanalarabiya.com/hls/alawwan2_360p.m3u8",
+      "HD": "https://stream.alawwanalarabiya.com/hls/alawwan2_720p.m3u8",
+      "FHD": "https://stream.alawwanalarabiya.com/hls/alawwan2_1080p.m3u8"
+    },
+    server: "Leo Servers",
+    status: "مباشر"
+  },
+  {
+    name: "الوان رياضية 3",
+    logo: "https://www.alawwanalarabiya.com/images/logo.png",
+    group: "الوان رياضية",
+    category: "رياضي",
+    plan: "basic",
+    qualities: {
+      "SD": "https://stream.alawwanalarabiya.com/hls/alawwan3_360p.m3u8",
+      "HD": "https://stream.alawwanalarabiya.com/hls/alawwan3_720p.m3u8",
+      "FHD": "https://stream.alawwanalarabiya.com/hls/alawwan3_1080p.m3u8"
+    },
+    server: "Leo Servers",
+    status: "مباشر"
+  },
+  
+  // قنوات إضافية
+  {
     name: "قناة العربية",
     logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Al_Arabiya_Logo_2016.svg/1200px-Al_Arabiya_Logo_2016.svg.png",
     group: "أخبار",
     category: "أخبار",
+    plan: "basic",
     qualities: {
       "SD": "https://live.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8",
       "HD": "https://live.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8",
@@ -522,6 +1218,7 @@ const channelsData = [
     logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/MBC_1_logo_%282021%29.png/800px-MBC_1_logo_%282021%29.png",
     group: "ترفيه",
     category: "ترفيهي",
+    plan: "basic",
     qualities: {
       "SD": "https://shls-mbc1-prod-dub.shahid.net/out/v1/73d3e1d29d2f4ed7a2f6b8a9f8f8f8f8/index.m3u8",
       "HD": "https://shls-mbc1-prod-dub.shahid.net/out/v1/73d3e1d29d2f4ed7a2f6b8a9f8f8f8f8/index_2.m3u8",
@@ -535,6 +1232,7 @@ const channelsData = [
     logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Rotana_Khalijia_Logo.png/800px-Rotana_Khalijia_Logo.png",
     group: "ترفيه",
     category: "ترفيهي",
+    plan: "basic",
     qualities: {
       "SD": "https://rotana-gulf.rotana.net/rotana-gulf/rotana-gulf_1.m3u8",
       "HD": "https://rotana-gulf.rotana.net/rotana-gulf/rotana-gulf_2.m3u8",
@@ -548,6 +1246,7 @@ const channelsData = [
     logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Alkass_logo.png/800px-Alkass_logo.png",
     group: "رياضة",
     category: "رياضي",
+    plan: "premium",
     qualities: {
       "SD": "http://185.226.172.11:8080/mo3ad1.m3u8",
       "HD": "http://185.226.172.11:8080/mo3ad1.m3u8",
@@ -561,10 +1260,39 @@ const channelsData = [
     logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/CNN_Arabic_2017_logo.svg/1200px-CNN_Arabic_2017_logo.svg.png",
     group: "أخبار",
     category: "أخبار",
+    plan: "basic",
     qualities: {
       "SD": "https://cnn-cnninternational-1-gb.samsung.wurl.com/manifest/playlist.m3u8",
       "HD": "https://cnn-cnninternational-1-gb.samsung.wurl.com/manifest/playlist_2.m3u8",
       "FHD": "https://cnn-cnninternational-1-gb.samsung.wurl.com/manifest/playlist_4.m3u8"
+    },
+    server: "Leo Servers",
+    status: "مباشر"
+  },
+  {
+    name: "قناة ناشيونال جيوغرافيك أبوظبي",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/National_Geographic_Abu_Dhabi_logo.svg/1200px-National_Geographic_Abu_Dhabi_logo.svg.png",
+    group: "وثائقية",
+    category: "ترفيهي",
+    plan: "premium",
+    qualities: {
+      "SD": "https://admdn1.cdn.mangomolo.com/natgeoabu/smil:natgeoabu.stream.smil/playlist.m3u8",
+      "HD": "https://admdn1.cdn.mangomolo.com/natgeoabu/smil:natgeoabu.stream.smil/chunklist_b2500000.m3u8",
+      "FHD": "https://admdn1.cdn.mangomolo.com/natgeoabu/smil:natgeoabu.stream.smil/chunklist_b3500000.m3u8"
+    },
+    server: "Leo Servers",
+    status: "مباشر"
+  },
+  {
+    name: "أبوظبي الرياضية 1",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/AD_Sports_1_logo.svg/1200px-AD_Sports_1_logo.svg.png",
+    group: "رياضية",
+    category: "رياضي",
+    plan: "premium",
+    qualities: {
+      "SD": "https://admdn5.cdn.mangomolo.com/adsports1/smil:adsports1.stream.smil/playlist.m3u8",
+      "HD": "https://admdn5.cdn.mangomolo.com/adsports1/smil:adsports1.stream.smil/chunklist_b2500000.m3u8",
+      "FHD": "https://admdn5.cdn.mangomolo.com/adsports1/smil:adsports1.stream.smil/chunklist_b3500000.m3u8"
     },
     server: "Leo Servers",
     status: "مباشر"
@@ -578,7 +1306,10 @@ let currentFilter = "all";
 let currentFocusIndex = 0;
 let channelCards = [];
 let filterButtons = [];
-let selectedQualities = {}; // لتخزين الجودة المختارة لكل قناة
+let selectedQualities = {};
+let favorites = JSON.parse(localStorage.getItem('leo-tv-favorites')) || [];
+let currentVideoPlayer = null;
+let isPlaying = false;
 
 // تهيئة التطبيق
 function initApp() {
@@ -590,9 +1321,31 @@ function initApp() {
     selectedQualities[channel.name] = "HD";
   });
   
+  updateStats();
   displayChannels(allChannels);
   setupEventListeners();
   setupRemoteNavigation();
+  
+  // تحميل المفضلة من localStorage
+  updateFavoritesCount();
+}
+
+// تحديث الإحصائيات
+function updateStats() {
+  document.getElementById('total-channels').textContent = allChannels.length;
+  document.getElementById('live-channels').textContent = allChannels.filter(ch => ch.status === 'مباشر').length;
+  document.getElementById('fav-channels').textContent = favorites.length;
+  
+  // تحديث مؤشر التقدم
+  const progress = document.getElementById('plan-progress');
+  const used = Math.min(favorites.length, 20); // حد أقصى 20 قناة مفضلة
+  const percentage = (used / 20) * 100;
+  progress.style.width = `${percentage}%`;
+}
+
+// تحديث عدد المفضلة
+function updateFavoritesCount() {
+  document.getElementById('fav-count').textContent = favorites.length;
 }
 
 // عرض القنوات
@@ -618,18 +1371,23 @@ function displayChannels(channels) {
   let html = "";
   
   for (const group in groupedChannels) {
-    html += `<div class="group-header">${group}</div>`;
+    html += `<div class="group-header"><i class="fas fa-tv"></i> ${group}</div>`;
     
     groupedChannels[group].forEach(ch => {
       const selectedQuality = selectedQualities[ch.name] || "HD";
+      const isFavorite = favorites.includes(ch.name);
+      const premiumClass = ch.plan === 'premium' ? 'premium' : '';
       
       html += `
-        <div class="channel-card" tabindex="0" data-channel="${ch.name}">
+        <div class="channel-card ${premiumClass}" tabindex="0" data-channel="${ch.name}">
+          <button class="fav-btn ${isFavorite ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorite('${ch.name}')">
+            <i class="fas fa-heart"></i>
+          </button>
           <img src="${ch.logo}" alt="${ch.name}" class="channel-logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/55x55/1e293b/ffffff?text=${ch.name.substring(0,2)}';">
           <div class="quality-badge">${selectedQuality}</div>
-          <div class="live-badge">LIVE</div>
+          <div class="live-badge">${ch.status}</div>
           <div class="channel-name">${ch.name}</div>
-          <div class="channel-info">${ch.server}</div>
+          <div class="channel-info">${ch.server} | ${ch.plan === 'premium' ? 'Premium' : 'Basic'}</div>
           
           <div class="quality-selector">
             <button class="quality-btn SD ${selectedQuality === 'SD' ? 'active' : ''}" 
@@ -655,8 +1413,11 @@ function displayChannels(channels) {
   // إضافة أحداث النقر للبطاقات (للتشغيل بالجودة المختارة)
   document.querySelectorAll('.channel-card').forEach(card => {
     card.addEventListener('click', function(e) {
-      // فقط إذا لم يكن النقر على زر الجودة
-      if (!e.target.classList.contains('quality-btn') && !e.target.closest('.quality-btn')) {
+      // فقط إذا لم يكن النقر على زر الجودة أو زر المفضلة
+      if (!e.target.classList.contains('quality-btn') && 
+          !e.target.closest('.quality-btn') &&
+          !e.target.classList.contains('fav-btn') &&
+          !e.target.closest('.fav-btn')) {
         const channelName = this.dataset.channel;
         const quality = selectedQualities[channelName] || "HD";
         playChannel(channelName, quality);
@@ -665,6 +1426,55 @@ function displayChannels(channels) {
   });
   
   setupRemoteNavigation();
+}
+
+// إضافة/إزالة من المفضلة
+function toggleFavorite(channelName) {
+  const index = favorites.indexOf(channelName);
+  
+  if (index === -1) {
+    favorites.push(channelName);
+    showNotice(`تم إضافة ${channelName} إلى المفضلة`);
+  } else {
+    favorites.splice(index, 1);
+    showNotice(`تم إزالة ${channelName} من المفضلة`);
+  }
+  
+  localStorage.setItem('leo-tv-favorites', JSON.stringify(favorites));
+  updateFavoritesCount();
+  updateStats();
+  
+  // تحديث الزر في الواجهة
+  const favBtn = document.querySelector(`[data-channel="${channelName}"] .fav-btn`);
+  if (favBtn) {
+    favBtn.classList.toggle('active');
+  }
+  
+  // إذا كنا في عرض المفضلة، قم بتحديث العرض
+  if (currentFilter === 'favorites') {
+    filterChannels('favorites');
+  }
+}
+
+// عرض القنوات المفضلة
+function showFavorites() {
+  if (favorites.length === 0) {
+    showNotice('لا توجد قنوات في المفضلة');
+    filterChannels('all');
+    return;
+  }
+  
+  currentFilter = 'favorites';
+  filterButtons.forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.textContent.includes('المفضلة')) {
+      btn.classList.add('active');
+    }
+  });
+  
+  const favChannels = allChannels.filter(ch => favorites.includes(ch.name));
+  displayChannels(favChannels);
+  showNotice(`عرض القنوات المفضلة (${favorites.length})`);
 }
 
 // اختيار جودة معينة
@@ -691,7 +1501,7 @@ function selectQuality(channelName, quality) {
   showNotice(`تم اختيار جودة ${quality} لـ ${channelName}`);
 }
 
-// تشغيل القناة (الطريقة الأصلية - الانتقال المباشر للرابط)
+// تشغيل القناة في مشغل مدمج
 function playChannel(channelName, quality) {
   const channel = allChannels.find(ch => ch.name === channelName);
   
@@ -705,14 +1515,101 @@ function playChannel(channelName, quality) {
   if (url && url.startsWith('http')) {
     showNotice(`جاري فتح ${channelName} بجودة ${quality}...`);
     
-    // الانتقال المباشر إلى رابط m3u8 - يعتمد على المتصفح
-    window.location.href = url;
-    
-    // أو فتح في نافذة/تبويب جديد
-    // window.open(url, '_blank');
+    // فتح مشغل الفيديو
+    openVideoPlayer(channelName, url, quality);
     
   } else {
     showNotice(`رابط البث غير متاح لـ ${channelName}`);
+  }
+}
+
+// فتح مشغل الفيديو المدمج
+function openVideoPlayer(channelName, url, quality) {
+  const overlay = document.getElementById('video-player-overlay');
+  const video = document.getElementById('video-player');
+  const source = document.getElementById('video-source');
+  const title = document.getElementById('video-title');
+  const info = document.getElementById('video-info-text');
+  
+  title.textContent = channelName;
+  info.textContent = `جودة: ${quality} | حالة: جيدة`;
+  source.src = url;
+  
+  video.load();
+  
+  overlay.style.display = 'flex';
+  currentVideoPlayer = video;
+  
+  // محاولة التشغيل التلقائي
+  video.play().then(() => {
+    isPlaying = true;
+    document.getElementById('play-pause-icon').className = 'fas fa-pause';
+  }).catch(e => {
+    console.log("التشغيل التلقائي فشل:", e);
+    showNotice('اضغط على زر التشغيل');
+  });
+  
+  // إخفاء التحكم عن بعد عند فتح المشغل
+  document.querySelector('.remote-controls').style.display = 'none';
+}
+
+// إغلاق مشغل الفيديو
+function closeVideoPlayer() {
+  const overlay = document.getElementById('video-player-overlay');
+  const video = document.getElementById('video-player');
+  
+  if (video && !video.paused) {
+    video.pause();
+  }
+  
+  overlay.style.display = 'none';
+  isPlaying = false;
+  
+  // إعادة التحكم عن بعد إذا كانت الشاشة كبيرة
+  if (window.innerWidth >= 1024) {
+    document.querySelector('.remote-controls').style.display = 'flex';
+  }
+}
+
+// التحكم في مشغل الفيديو
+function videoControl(action) {
+  if (!currentVideoPlayer) return;
+  
+  const icon = document.getElementById('play-pause-icon');
+  
+  switch(action) {
+    case 'play-pause':
+      if (currentVideoPlayer.paused) {
+        currentVideoPlayer.play();
+        icon.className = 'fas fa-pause';
+        isPlaying = true;
+      } else {
+        currentVideoPlayer.pause();
+        icon.className = 'fas fa-play';
+        isPlaying = false;
+      }
+      break;
+      
+    case 'volume-up':
+      currentVideoPlayer.volume = Math.min(1, currentVideoPlayer.volume + 0.1);
+      showNotice(`الصوت: ${Math.round(currentVideoPlayer.volume * 100)}%`);
+      break;
+      
+    case 'rewind':
+      currentVideoPlayer.currentTime = Math.max(0, currentVideoPlayer.currentTime - 10);
+      break;
+      
+    case 'forward':
+      currentVideoPlayer.currentTime += 10;
+      break;
+      
+    case 'fullscreen':
+      if (currentVideoPlayer.requestFullscreen) {
+        currentVideoPlayer.requestFullscreen();
+      } else if (currentVideoPlayer.webkitRequestFullscreen) {
+        currentVideoPlayer.webkitRequestFullscreen();
+      }
+      break;
   }
 }
 
@@ -742,6 +1639,10 @@ function filterChannels(category) {
   
   if (category === "all") {
     filteredChannels = [...allChannels];
+  } else if (category === "premium") {
+    filteredChannels = allChannels.filter(ch => ch.plan === "premium");
+  } else if (category === "favorites") {
+    filteredChannels = allChannels.filter(ch => favorites.includes(ch.name));
   } else {
     filteredChannels = allChannels.filter(ch => ch.category === category);
   }
@@ -763,6 +1664,24 @@ function applySearch() {
     );
     displayChannels(searchResults);
   }
+}
+
+// فلتر متقدم
+function showAdvancedFilters() {
+  const qualities = ['SD', 'HD', 'FHD'];
+  let filterText = "الفلتر الحالي: ";
+  
+  if (currentFilter === 'all') {
+    filterText += "الكل";
+  } else if (currentFilter === 'premium') {
+    filterText += "Premium";
+  } else if (currentFilter === 'favorites') {
+    filterText += "المفضلة";
+  } else {
+    filterText += currentFilter;
+  }
+  
+  showNotice(filterText);
 }
 
 // إعداد التنقل بالأزرار
@@ -844,12 +1763,25 @@ function setupEventListeners() {
   filterButtons = Array.from(document.querySelectorAll('.filter-btn'));
   filterButtons.forEach(btn => {
     btn.addEventListener('click', function() {
-      filterChannels(this.dataset.filter);
+      if (this.dataset.filter) {
+        filterChannels(this.dataset.filter);
+      }
     });
   });
   
   // التنقل بلوحة المفاتيح
   document.addEventListener('keydown', function(e) {
+    // تجاهل الأزرار إذا كان مشغل الفيديو مفتوح
+    if (document.getElementById('video-player-overlay').style.display === 'flex') {
+      if (e.key === 'Escape') {
+        closeVideoPlayer();
+      } else if (e.key === ' ') {
+        e.preventDefault();
+        videoControl('play-pause');
+      }
+      return;
+    }
+    
     if (document.activeElement === searchInput) return;
     
     switch(e.key) {
@@ -876,19 +1808,33 @@ function setupEventListeners() {
       case 'Escape':
         searchInput.focus();
         break;
+      case 'f':
+      case 'F':
+        if (channelCards.length > 0) {
+          const channelName = channelCards[currentFocusIndex].dataset.channel;
+          toggleFavorite(channelName);
+        }
+        break;
     }
   });
   
   // إظهار/إخفاء التحكم عن بعد حسب حجم الشاشة
   window.addEventListener('resize', () => {
     const remoteControls = document.querySelector('.remote-controls');
-    if (window.innerWidth >= 1024) {
+    if (window.innerWidth >= 1024 && document.getElementById('video-player-overlay').style.display !== 'flex') {
       remoteControls.style.display = 'flex';
     } else {
       remoteControls.style.display = 'none';
     }
     
     setupRemoteNavigation();
+  });
+  
+  // إغلاق مشغل الفيديو عند النقر خارج الصندوق
+  document.getElementById('video-player-overlay').addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeVideoPlayer();
+    }
   });
 }
 
